@@ -10,14 +10,14 @@ $(window).on('load', function () { //make sure whole site is loaded
 /* toogle password */
 
 
-function togglepwd() {
-    var x = document.getElementById("exampleInputPassword1");
-    if (x.type === "password") {
-        x.type = "text";
+$(".toggle-password").click(function () {
+    let input = $($(this).attr("toggle"));
+    if (input.attr("type") == "password") {
+      input.attr("type", "text");
     } else {
-        x.type = "password";
+      input.attr("type", "password");
     }
-}
+  });
 /* ==========================================
               navigation
 ===========================================*/

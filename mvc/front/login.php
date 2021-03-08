@@ -125,7 +125,7 @@
                     <div class="form-group">
                     <label for="password">Password<a class="forgot-ps" href="forgotpw.html">Forgot Password?</a></label>
                     <input type="password" name="password" class="form-control form-control-sm" id="password" placeholder="Password" value="<?php if(isset($_COOKIE['passwordcookie'])){ echo $_COOKIE['passwordcookie'] ; } ?>">
-                    <span toggle="#exampleInputPassword1" class="fa fa-eye-slash fa-eye field-icon toggle-password" onclick="togglepwd()"></span>
+                    <span toggle="#password" class="fa fa-eye-slash fa-eye field-icon toggle-password" onclick="togglepwd()"></span>
                     </div>
                     <div class="form-check">
                     <input type="checkbox" name="rememberme" class="form-check-input form-check-size" id="exampleCheck1">
