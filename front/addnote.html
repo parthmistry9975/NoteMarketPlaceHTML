@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<!-- meta tags -->
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
+
+	<!-- Title -->
+	<title>Notes MarketPlace</title>
+
+	<!-- google fonts -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- font awesome css -->
+    <link rel="stylesheet" href="css/fontawesome/css/font-awesome.min.css">   
+    
+    <!-- bootstrap css -->
+    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css">
+
+    <!-- custom css -->
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    
+    <!-- responsive css -->
+    <link rel="stylesheet" type="text/css" href="css/responsive.css">
+
+</head>
+<body>
+    
+    <!--
+	<!-- preloader -->
+    <div id="preloader">
+        <div id="status">&nbsp;</div>
+    </div>
+    
+    
+    <!-- navigation -->
+    <section id="nav-bar">
+        <nav class="navbar1 navbar-expand-lg">
+            <a class="navbar-brand" href="index.html"><img src="images/user-profile/logo.png" alt="logo"></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="searchnotes.html">Search Notes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="addnote.html">Sell Your Notes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="buyerrequest.html">Buyer Requests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="faq.html">FAQ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contactus.html">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><img src="images/user-profile/login-image.png" alt="login image"></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="login.html"><button type="button" class="btn btn-primary btn_login">Login</button></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </section>
+    
+	<!-- Banner  -->
+        <section class="banner">
+            <div class="content-box-banner">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 class="text-center">Add Notes</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </section>
+        <!-- Banner Ends -->
+	
+	<!-- profile form -->
+	<div class="container">
+            <div class="row">
+                <form class="profile-form col-md-12">
+                    <div class="col-md-12 profile-form-heading">
+                        <h2>Basic Note Details</h2>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="title">Title &#42;</label>
+                            <input type="text" class="form-control" id="title" placeholder="Enter your notes title">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="category">Category &#42;</label>
+                            <select id="category" class="form-control">
+                                <option>Select your category</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="displaypicture">Display Picture</label>
+                            <input type="button" class="form-control pp-upload" id="displaypicture">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="uploadnote">Upload Notes &#42;</label>
+                            <input type="button" class="form-control pp-upload" id="uploadnote">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="notetype">Type</label>
+                            <select id="notetype" class="form-control">
+                                <option>Select your note type</option>
+                                <option>+61</option>
+                                <option>+43</option>
+                                <option>+1</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="pages">Number of Pages</label>
+                            <input type="text" class="form-control" id="pages" placeholder="Enter number of note pages">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="description">Description &#42;</label>
+                            <textarea name="description" class="form-control hw" id="description" cols="50" rows="5" placeholder="Enter your description"></textarea>
+                        </div>
+                    </div>
+                
+                    <div class="col-md-12 profile-form-heading">
+                        <h2>Institution Information</h2>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="country">Country</label>
+                            <select id="country" class="form-control">
+                                <option>Select your country</option>
+                                <option>India</option>
+                                <option>USA</option>
+                                <option>UK</option>
+                                <option>Canada</option>
+                                <option>Russia</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="institute">Instituion Name</label>
+                            <input type="text" class="form-control" id="institute" placeholder="Enter your institution name">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12 profile-form-heading">
+                        <h2>Course Details</h2>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="coursename">Course Name</label>
+                            <input type="text" class="form-control" id="coursename" placeholder="Enter your course name">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="coursecode">Course Code</label>
+                            <input type="text" class="form-control" id="coursecode" placeholder="Enter your course code">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="professor">Professor / Lecturer</label>
+                            <input type="text" class="form-control" id="professor" placeholder="Enter your professor name">
+                        </div>
+                        <div class="form-group col-md-6">
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12 profile-form-heading">
+                        <h2>Selling information</h2>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                    <label for="sellfor">Sell For &#42;</label>
+                                    <br>
+                                    <label class="radio-inline radio-layout">
+                                        <input type="radio" class="radio-size" name="sellfor" value="Free" selected><label class="radio-label" for="free">&nbsp;&nbsp;&nbsp;Free</label>
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" class="radio-size" name="sellfor" value="Paid"><label class="radio-label" for="free">&nbsp;&nbsp;&nbsp;Paid</label>
+                                    </label>
+                                </div>
+                                <div class="form-group col-md-12 margin-layout">
+                                    <label for="sellprice">Sell Price &#42;</label>
+                                    <input type="text" class="form-control" id="sellprice" placeholder="Enter your price">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="notepreview">Note Preview</label>
+                            <input type="button" class="form-control note-upload" id="noteprevie" name="Upload a picture">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-profile add-note-button">Save</button>
+                    <span></span><button type="submit" class="btn btn-profile add-note-button">Publish</button>
+                </form>
+            </div>
+        </div>
+	<!-- profile form ends -->
+	
+	<!-- footer -->
+	<section class="footer">
+        <div class="container-fluid">
+            <hr>
+            <div class="row">
+                <div class="col-md-6 footer_content">
+                    <p>Copyright © <a href="https://www.tatvasoft.com/">TatvaSoft</a> All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 footer_social text-right">
+                    <ul class="social-list">
+                        <li><a href="#">
+                                <i class="fa fa-facebook"></i>
+                            </a></li>
+                        <li><a href="#">
+                                <i class="fa fa-twitter"></i>
+                            </a></li>
+                        <li><a href="#">
+                                <i class="fa fa-google-plus"></i>
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+	<!-- footer ends -->
+	
+	<!-- jquery-->
+    <script src="js/jquery.min.js"></script>
+
+    <!-- bootstrap js -->
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+
+    <!-- custom js -->
+    <script src="js/script.js"></script>
+
+</body>
+</html>
