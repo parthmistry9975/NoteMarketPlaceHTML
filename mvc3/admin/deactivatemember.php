@@ -20,17 +20,19 @@
         $update_notes = mysqli_query($connection , $update_notes_query);
         
         if($update_isactive && $update_notes){
+            $_SESSION['deactivatemember'] = "yes";
+            header("location:members.php?admin=1");
             ?>
             <script>
                 alert("member deactivated !!");
-                window.location = "members.php?admin=1";
             </script>
             <?php 
         }else{
+            $_SESSION['deactivatemember'] = "no";
+            header("location:members.php?admin=1");
             ?>
             <script>
                 alert("member not deactivated !!");
-                window.location = "members.php?admin=1";
             </script>
             <?php
         }

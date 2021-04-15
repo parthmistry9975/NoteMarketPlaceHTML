@@ -9,6 +9,11 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['update']) and $_SESSION['update'] == 'yes'){
+        $_SESSION['status'] = "Password Updated";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['update']);
+    }
 ?>
 
 <?php
@@ -34,33 +39,20 @@
                     $update_pw_query = "UPDATE users SET Password = '$Pass' , ModifiedDate = NOW() , ModifiedBy = $loginid WHERE ID = $loginid";
                     $update_pw = mysqli_query($connection, $update_pw_query);
                     if($update_pw){
-                        ?>
-                        <script>
-                            alert("password updated !!");
-                            window.location = "admindashboard.php?admin=1";
-                        </script>
-                        <?php 
+                        $_SESSION['update'] = "yes";
+                        header("location:change-admin.php?admin=1");
                     }else{
-                        ?>
-                        <script>
-                            alert("new password and confirm password arn't same !!");
-                        </script>
-                        <?php 
+                        $_SESSION['status'] = "Password isn't Updated";
+                        $_SESSION['status_code'] = "error";
+                        header("location:change-admin.php?admin=1");
                     }
                 }else{
-                    ?>
-                    <script>
-                        alert("new password and confirm password arn't same !!");
-                    </script>
-                    <?php 
-                    }
-                
+                    $_SESSION['status'] = "new password and confirm password arn't same !!";
+                    $_SESSION['status_code'] = "warning";
+                }
             }else{
-                ?>
-                <script>
-                    alert("Wrong old Password entered");
-                </script>
-                <?php
+                $_SESSION['status'] = "Wrong current password entered !!";
+                $_SESSION['status_code'] = "warning";
             }
         }
         
@@ -161,6 +153,27 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

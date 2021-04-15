@@ -12,6 +12,11 @@
     if($_SESSION['ROLE'] != 3){
             header("location:../admin/admindashboard.php?admin=1");
     }
+    if(isset($_SESSION['publishtoreview']) and $_SESSION['publishtoreview'] == 'yes'){
+        $_SESSION['status'] = "Note is gone to admin for review !!";
+        $_SESSION['status_code'] = "info";
+        unset($_SESSION['publishtoreview']);
+    }
 ?>
 
 <?php
@@ -27,11 +32,15 @@
             
             $displaypic= $_FILES['displaypicture'];
             $_SESSION['displaypic'] = $displaypic;
+            $displaypicnewname = "";
             
             $uploadnote= $_FILES['notes-file'];
             $_SESSION['uploadnote'] = $uploadnote;
             
             $type= mysqli_real_escape_string($connection,$_POST['notetype'] );
+            if(!$type){
+                $type = 6;
+            }
             $_SESSION['type'] = $type;
             
             $pages= mysqli_real_escape_string($connection,$_POST['numberofpages'] );
@@ -41,6 +50,9 @@
             $_SESSION['description'] = $description;
             
             $country= mysqli_real_escape_string($connection,$_POST['country'] );
+            if(!$country){
+                $country = 6;
+            }
             $_SESSION['country'] = $country;
             
             $institution= mysqli_real_escape_string($connection,$_POST['institutename'] );
@@ -57,6 +69,11 @@
             
             $sellfor= mysqli_real_escape_string($connection,$_POST['sellfor'] );
             $_SESSION['sellfor'] = $sellfor;
+            if($sellfor == 1){
+                $sellfor = 'True';
+            }else{
+                $sellfor = 'False';
+            }
             
             $price= mysqli_real_escape_string($connection,$_POST['sellprice'] );
             if($sellfor == 0){
@@ -74,14 +91,11 @@
             $displaypic_ext_check = strtolower(end($displaypic_ext));
             $valid_displaypic_ext = array('png','jpg','jpeg');
             $displaypicnewname = "bp_".date("dmyhis").'.'.$displaypic_ext_check;
-        
-    
             $previewname = $preview['name'];
             $preview_ext = explode('.',$previewname);
             $preview_ext_check = strtolower(end($preview_ext));
             $valid_preview_ext = array('pdf');
             $previewnewname = "preview_".date("dmyhis").'.'.$preview_ext_check;
-            
             $countfiles = count($uploadnote['name']);
             for($i=0 ; $i<$countfiles ; $i++){
                 $uploadnotename = $uploadnote['name'][$i];
@@ -90,10 +104,28 @@
                 $valid_uploadnote_ext = array('pdf');
             }
             
-            if(in_array($displaypic_ext_check,$valid_displaypic_ext) && in_array($uploadnote_ext_check,$valid_uploadnote_ext) && in_array($preview_ext_check,$valid_preview_ext) ) {
+            if (!empty($displaypicname)) {
+                if (in_array($displaypic_ext_check,$valid_displaypic_ext)) {
+
+                    $displaypicnewname = $displaypicnewname = "bp_".date("dmyhis").'.'.$displaypic_ext_check;
+                } else {
+                    ?>
+                    <script>
+                        alert("select proper file type for preview 2")
+                    </script>
+                    <?php
+                }
+            }else{
+                $displaypicnewname = "";
+            }
+            
+            if(in_array($uploadnote_ext_check,$valid_uploadnote_ext) && in_array($preview_ext_check,$valid_preview_ext) ) {
             
             $insertquery = "INSERT INTO seller_notes(SellerID, Status,ActionedBy,Title,Category,DisplayPicture, NoteType, NumberofPages, Description, UniversityName,Country, Course, CourseCode, Professor, IsPaid, SellingPrice,NotesPreview,CreatedBy,ModifiedBy) VALUES ('$loginID','6','$loginID','$title','$category','$displaypicnewname','$type','$pages','$description','$institution','$country','$course','$coursecode','$professor',$sellfor,'$price','$previewnewname','$loginID','$loginID')";
             $iquery= mysqli_query($connection,$insertquery);
+            if(!$iquery){
+                die('query failed'.mysqli_error($connection));
+            }
             $noteid = mysqli_insert_id($connection);
             $_SESSION['noteid'] = $noteid;
             $_SESSION['notetitle'] = $title;
@@ -110,14 +142,13 @@
             $preview_dest = '../upload/'.$loginID.'/'.$noteid.'/'.$previewnewname;
             move_uploaded_file($previewpath,$preview_dest);
             
-            
+            if(!is_dir("'../upload/'.$loginID.'/'.$noteid.'/Attachment'.'/'")){
+                mkdir("../upload/".$loginID."/".$noteid."/Attachment"."/",0777,true);
+            }
             for($i=0;$i<$countfiles;$i++){
                 $uploadnotenewname = "Attachment_[$i]_".date("dmyhis").'.'.$uploadnote_ext_check;
                 $uploadnotepath = $uploadnote['tmp_name'];
     
-                if(!is_dir("'../upload/'.$loginID.'/'.$noteid.'/Attachment'.'/'")){
-                    mkdir("../upload/".$loginID."/".$noteid."/Attachment"."/",0777,true);
-                }
                 $uploadnote_dest = '../upload/'.$loginID.'/'.$noteid.'/Attachment'.'/'.$uploadnotenewname;
                 move_uploaded_file($uploadnotepath[$i],$uploadnote_dest);
             
@@ -128,16 +159,16 @@
             }
                 
             if($iquery && $iquery1){
-            ?>
-                <script>
-                    alert("note added !!");
-                </script>
-            <?php
+                
+                $_SESSION['status'] = "Note Added As Draft !!";
+                $_SESSION['status_code'] = 'success';
+                
             }
             else{
             ?>
                 <script>
                     alert("note isn't added !! ");
+                    location.href = "addnote.php";
                 </script>
             <?php
             }
@@ -149,6 +180,7 @@
         ?>
             <script>
                 alert("please choose proper file type !! for display picture jpg , jpeg , png !! for preview and attachment file pdf ");
+                location.href = "addnote.php";
             </script>
         <?php
         }
@@ -222,15 +254,16 @@
                             </tbody>
                         </table>";   //Email body
                         $mail->AltBody = 'Plain text message body for non-HTML email client. Gmail SMTP email body.';   //Alternate body of email
-
+                        $_SESSION['publishtoreview'] = "yes";
                         $mail->send();
+                        header("location:addnote.php");
 
                     } catch (Exception $e) {
                         echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
                     }
                     ?>
 
-                    }else{
+                    } else{
             
                     }
                 
@@ -250,6 +283,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -306,7 +342,7 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
                             $pp_file = "images/default/profile/dp.jpg";
@@ -358,7 +394,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="title">Title &#42;</label>
-                            <input type="text" pattern="[A-Za-z0-9]{3,}" title="must have 3 characters" name="notetitle" class="form-control" id="title" placeholder="Enter your notes title" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['title']."'" ; }?>>
+                            <input type="text" title="must have 3 characters" name="notetitle" class="form-control" id="title" placeholder="Enter your notes title" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['title']."'" ; }?>>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="category">Category &#42;</label>
@@ -388,7 +424,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6 file-upload">
                             <label for="displaypicture">Display Picture</label>
-                            <input type="file" name="displaypicture" class="form-control-file display-picture" id="displaypicture" required <?php if(isset($_POST['save'])){ echo "disabled" ; }?>>
+                            <input type="file" name="displaypicture" class="form-control-file display-picture" id="displaypicture" <?php if(isset($_POST['save'])){ echo "disabled" ; }?>>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="uploadnote">Upload Notes &#42;</label>
@@ -405,7 +441,7 @@
                                 $typerows = mysqli_num_rows($tquery);
                             
                             ?>
-                            <select id="notetype" name="notetype" class="form-control" required>
+                            <select id="notetype" name="notetype" class="form-control">
                                 <option value="">Select your note type</option>
                                 <?php
                                     for($i=1;$i<=$typerows;$i++){
@@ -419,13 +455,13 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="pages">Number of Pages</label>
-                            <input type="text" name="numberofpages"pattern="[0-9]{1,}" title="only numbers are allowed" class="form-control" id="pages" placeholder="Enter number of note pages" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['pages']."'" ; }?>>
+                            <input type="text" name="numberofpages" title="only numbers are allowed" class="form-control" id="pages" placeholder="Enter number of note pages" <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['pages']."'" ; }?>>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-12">
                             <label for="description">Description &#42;</label>
-                            <textarea name="description" pattern="[A-Za-z0-9]{5,}" title="must have 5 characters" class="form-control hw" id="description" cols="50" rows="5" placeholder="Enter your description" required><?php if(isset($_POST['save'])){  echo $_SESSION['description']; }?></textarea>
+                            <textarea name="description" title="must have 5 characters" class="form-control hw" id="description" cols="50" rows="5" placeholder="Enter your description" required><?php if(isset($_POST['save'])){  echo $_SESSION['description']; }?></textarea>
                         </div>
                     </div>
                 
@@ -442,7 +478,7 @@
                                 $countryrows = mysqli_num_rows($coquery);
                             
                             ?>
-                            <select id="country" name="country" class="form-control" required>
+                            <select id="country" name="country" class="form-control">
                                 <option value="">Select your country</option>
                                 <?php
                                     for($i=1;$i<=$countryrows;$i++){
@@ -456,7 +492,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="institute">Instituion Name</label>
-                            <input type="text" pattern="[A-Za-z]{3,}" title="numbers are not allowed must have 3 characters" name="institutename" class="form-control" id="institute" placeholder="Enter your institution name" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['institution']."'" ; }?>>
+                            <input type="text" title="numbers are not allowed must have 3 characters" name="institutename" class="form-control" id="institute" placeholder="Enter your institution name" <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['institution']."'" ; }?>>
                         </div>
                     </div>
                     
@@ -466,17 +502,17 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="coursename">Course Name</label>
-                            <input type="text" pattern="[A-Za-z]{2,}" title="must have 2 characters" name="coursename" class="form-control" id="coursename" placeholder="Enter your course name" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['course']."'" ; }?>>
+                            <input type="text" title="must have 2 characters" name="coursename" class="form-control" id="coursename" placeholder="Enter your course name" <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['course']."'" ; }?>>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="coursecode">Course Code</label>
-                            <input type="text"pattern="[0-9]{1,20}" title="maximum 20 characters" name="coursecode" class="form-control" id="coursecode" placeholder="Enter your course code" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['coursecode']."'" ; }?>>
+                            <input type="text" title="maximum 20 characters" name="coursecode" class="form-control" id="coursecode" placeholder="Enter your course code" <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['coursecode']."'" ; }?>>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="professor">Professor / Lecturer</label>
-                            <input type="text" pattern="[A-Za-z]{3,}" title="numbers are not allowed must have 3 characters" name="author" class="form-control" id="professor" placeholder="Enter your professor name" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['professor']."'" ; }?>>
+                            <input type="text" title="numbers are not allowed must have 3 characters" name="author" class="form-control" id="professor" placeholder="Enter your professor name" <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['professor']."'" ; }?>>
                         </div>
                         <div class="form-group col-md-6">
                             
@@ -493,15 +529,15 @@
                                     <label for="sellfor">Sell For &#42;</label>
                                     <br>
                                     <label class="radio-inline radio-layout">
-                                        <input type="radio" class="radio-size" name="sellfor" value="0" required <?php if(isset($_POST['save'])){if($_SESSION['sellfor']==0){echo "checked"; } }?>><label class="radio-label" for="free">&nbsp;&nbsp;&nbsp;Free</label>
+                                        <input type="radio" id="free" onclick="javascript:yesnoCheck();" class="radio-size" name="sellfor" value="0" required <?php if(isset($_POST['save'])){if($_SESSION['sellfor']==0){echo "checked"; } }?>><label class="radio-label" for="free">&nbsp;&nbsp;&nbsp;Free</label>
                                     </label>
                                     <label class="radio-inline">
-                                        <input type="radio" class="radio-size" name="sellfor" value="1" <?php if(isset($_POST['save'])){if($_SESSION['sellfor']==1){echo "checked"; } }?>><label class="radio-label" for="free">&nbsp;&nbsp;&nbsp;Paid</label>
+                                        <input type="radio" id="paid" onclick="javascript:yesnoCheck();" class="radio-size" name="sellfor" value="1" <?php if(isset($_POST['save'])){if($_SESSION['sellfor']==1){echo "checked"; } }?>><label class="radio-label" for="free">&nbsp;&nbsp;&nbsp;Paid</label>
                                     </label>
                                 </div>
                                 <div class="form-group col-md-12 margin-layout">
-                                    <label for="sellprice">Sell Price &#42;</label>
-                                    <input type="text" pattern="[0-9]{1,}" title="only numbers allowed must have 1 characters" name="sellprice" class="form-control" id="sellprice" placeholder="Enter your price" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['price']."'" ; }?>>
+                                    <label style="visibility:hidden" id="pricelabel" for="sellprice">Sell Price &#42;</label>
+                                    <input type="text" pattern="[0-9]{1,}" style="visibility:hidden" title="only numbers allowed must have 1 characters" name="sellprice" class="form-control" id="sellprice" placeholder="Enter your price" required <?php if(isset($_POST['save'])){ echo "value="."'".$_SESSION['price']."'" ; }?>>
                                 </div>
                             </div>
                         </div>
@@ -530,15 +566,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -552,9 +612,58 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>
+    
+    <script>
+    
+        function yesnoCheck() {
+            if (document.getElementById('paid').checked) {
+                document.getElementById('sellprice').style.visibility = 'visible';
+                document.getElementById('pricelabel').style.visibility = 'visible';
+            }
+            else {
+                document.getElementById('sellprice').style.visibility = 'hidden';
+                document.getElementById('pricelabel').style.visibility = 'hidden';
+                document.getElementById('sellprice').value = '0';
+            }
+        }
+    
+    </script>
+    
+    <?php if(isset($_POST['save'])){  
+
+    ?>
+    <script>
+        document.getElementById('sellprice').style.visibility = 'visible';
+        document.getElementById('pricelabel').style.visibility = 'visible';
+    </script>
+    <?php
+    
+    }?>
 
 </body>
 </html>

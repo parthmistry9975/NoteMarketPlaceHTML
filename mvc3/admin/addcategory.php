@@ -148,23 +148,11 @@
                 $add_category_query = "INSERT INTO note_categories( Name , Description , CreatedBy ) VALUES ( '$categoryname' , '$categorydescription' , $loginid)";
                 $add_category = mysqli_query($connection , $add_category_query);
                 if($add_category){
-                    ?>
-                    <script>
-                        
-                        alert("category added !!");
-                        location.replace("managecategory.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['categoryadd'] = "yes";
+                    header("location:managecategory.php?admin=1");
                 }else{
-                    ?>
-                    <script>
-                        
-                        alert("category not added !!");
-                        location.replace("managecategory.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['categoryadd'] = "no";
+                    header("location:managecategory.php?admin=1");
                 }
             }
             
@@ -177,23 +165,11 @@
                 $edit_category_query = "UPDATE note_categories SET Name = '$categoryname' , Description = '$categorydescription', ModifiedDate = NOW() , ModifiedBy = $loginid WHERE ID = $edit_categoryid";
                 $edit_category = mysqli_query($connection , $edit_category_query);
                 if($edit_category){
-                    ?>
-                    <script>
-                        
-                        alert("category updated !!");
-                        location.replace("managecategory.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['categoryedit'] = "yes";
+                    header("location:managecategory.php?admin=1");
                 }else{
-                    ?>
-                    <script>
-                        
-                        alert("category not updated !!");
-                        location.replace("managecategory.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['categoryedit'] = "no";
+                    header("location:managecategory.php?admin=1");
                 }
             }
                 

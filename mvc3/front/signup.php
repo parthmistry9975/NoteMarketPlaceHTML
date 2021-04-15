@@ -21,8 +21,10 @@
 
     <!-- Title -->
     <title>Notes MarketPlace</title>
-
-
+    
+    <!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
+    
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -58,13 +60,9 @@
         $check_queried = mysqli_query($connection, $check_query);
         $emailcount = mysqli_num_rows($check_queried);
         if($emailcount > 0){
-            
-            ?>
-            <script>
-                alert('email is already Registered.');
-            </script>
-            <?php
-            $message = ' ';
+        
+            $_SESSION['status'] = 'email is already Registered.';
+            $_SESSION['status_code'] = 'warning';
             
         }else{
             if($_POST['password'] == $_POST['confirmpassword']){
@@ -108,55 +106,36 @@
 
                         $mail->IsHTML(true);
                         $mail->Subject = "About verifying emailid for NotesMarketplace";
-                        $mail->Body = '<!DOCTYPE html>
-                                        <html lang="en">
-
-                                        <head>
-                                            <meta charset="UTF-8">
-                                            <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                                            <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
-                                            <title>Notes Market Place-Email verification</title>
-
-                                            <!-- Google Fonts -->
-                                            <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-                                        </head>
-
-                                        <body style="background: #6255a5;">
-                                            <table style="height:40%;width: 40%; position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);font-family:Open Sans !important;background: #fff;border-radius: 3px;padding-left: 2%;padding-right: 2%;">
-                                                <thead>
-                                                    <th>
-                                                        <img src="../images/logo/top-logo1.png" alt="logo" style="margin-top: 5%;">
-                                                    </th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr style="height: 60px;font-family: Open Sans;font-size: 26px;font-weight: 600;line-height: 30px;color: #6255a5;">
-                                                        <td class="text-1">Email Verification</td>
-                                                    </tr>
-                                                    <tr style="height: 40px;font-family: Open Sans;font-size: 18px;font-weight: 600;line-height: 22px;color: #333333;margin-bottom: 20px;">
-                                                        <td class="text-2">Dear '.$FirstName.' '.$LastName.',</td>
-                                                    </tr>
-                                                    <tr style="height: 60px;">
-                                                        <td class="text-3">
-                                                            Thanks for Signing up! <br>
-                                                            Simply click below for email verification.
-                                                        </td>
-                                                    </tr>
-                                                    <tr style="height: 120px;font-size: 16px;font-weight: 400;line-height: 22px;color: #333333;margin-bottom: 50px;">
-                                                        <td style="text-align: center;">
-                                                            <a href="localhost/NoteMarketPlaceHTML/front/emailverification.php?id='.$EmailID.'">
-                                                            <button class="btn btn-verify" style="width: 100% !important;height:50px;font-family: Open Sans; font-size: 18px;font-weight: 600;line-height: 22px;color: #fff;background-color: #6255a5;border-radius: 3px;">VERIFY EMAIL ADDRESS</button>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </body>
-
-                                        </html>';
+                        $mail->Body = "<table style='height:60%;width: 60%; position: absolute;margin-left:10%;font-family:Open Sans !important;background: white;border-radius: 3px;padding-left: 2%;padding-right: 2%;'>
+        <thead>
+            <th>
+                <img src='http://localhost/NoteMarketPlaceHTML/front/images/home/top-logo.png' alt='logo' style='margin-top: 5%;'>
+            </th>
+        </thead>
+        <tbody>
+            <tr style='height: 60px;font-family: Open Sans;font-size: 26px;font-weight: 600;line-height: 30px;color: #6255a5;'>
+                <td class='text-1'>Email Verification</td>
+            </tr>
+            <tr style='height: 40px;font-family: Open Sans;font-size: 18px;font-weight: 600;line-height: 22px;color: #333333;margin-bottom: 20px;'>
+                <td class='text-2'>Dear $FirstName $LastName,</td>
+            </tr>
+            <tr style='height: 60px;'>
+                <td class='text-3'>
+                    Thanks for Signing up! <br>
+                    Simply click below for email verification.
+                </td>
+            </tr>
+            <tr style='height: 120px;font-size: 16px;font-weight: 400;line-height: 22px;color: #333333;margin-bottom: 50px;'>
+                <td style='text-align: center;'>
+                    <button class='btn btn-verify' style='width: 100% !important;height:50px;font-family: Open Sans; font-size: 18px;font-weight: 600;line-height: 22px;color: #fff;background-color: #6255a5;border-radius: 3px;'><a href='http://localhost/NoteMarketPlaceHTML/front/emailverification.php?id=".$EmailID."' style='text-decoration:none !important;color:white !important;'>VERIFY EMAIL ADDRESS</a></button>
+                </td>
+            </tr>
+        </tbody>
+    </table>";
                         $mail->AltBody = 'Verify emailid registered for notesmarket';
 
                         $mail->send();
-                        $_SESSION['message'] = "<i class='fa fa-check-circle' aria-hidden='true'></i>&nbsp;&nbsp;Please check your mail and verify it !";
+                        
                     } catch (Exception $e) {
                         echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
                     }
@@ -165,26 +144,20 @@
                 {
                     die("Query failed" . mysqli_error($connection));
                 }
-                $message = '<i class="fa fa-check-circle" aria-hidden="true"></i>&nbsp;&nbsp;Your account has been successfully created.';
-                
+                $_SESSION['message'] = "<i class='fa fa-check-circle' aria-hidden='true'></i>&nbsp;Your account successfully created";
+                $_SESSION['status'] = 'Your account successfully created.check your mail to verify your email Address';
+                $_SESSION['status_code'] = 'success';    
             
             
             
         } else {
             
-            $_SESSION['message'] = ' ';
-            ?>
-            <script>
-            alert('password and confirm password should be equal');
-            </script>
-            <?php
+            $_SESSION['status'] = 'password and confirm password should be equal';
+            $_SESSION['status_code'] = 'error';
+            
         }
         }
         
-        
-    }else {
-        
-        $_SESSION['message'] = ' ';
         
     }
     
@@ -221,7 +194,7 @@
                     </div>
                     <div class="form-group">
                         <label for="email">Email &#42;</label>
-                        <input type="email" id="email" name="email_id" pattern="[a-z0-9_%+-]+[@][a-z0-9-]+[.][a-z]{2,}$" title="valid email formate : char@char.char" class="form-control form-control-sm" id="email" placeholder="Enter your email address" required>
+                        <input type="email" id="email" name="email_id" title="valid email formate : char@char.char" class="form-control form-control-sm" id="email" placeholder="Enter your email address" required>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
@@ -237,7 +210,7 @@
                     <button type="submit" name="submit" class="btn">Sign Up</button>
                 </form>
                 <div class="signup-footer text-center">
-                    <p>Already have an account? <a href="login.html">Login</a></p>
+                    <p>Already have an account? <a href="login.php">Login</a></p>
                 </div>
 
             </div>
@@ -255,6 +228,28 @@
 
     <!-- bootstrap js -->
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

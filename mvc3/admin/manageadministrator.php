@@ -12,6 +12,36 @@
     if($_SESSION['ROLE'] != 1){
         header("location:admindashboard.php?admin=1");
     }
+    if(isset($_SESSION['admintdel']) and $_SESSION['admintdel'] == 'yes'){
+        $_SESSION['status'] = "admin Inactivated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['admintdel']);
+    }
+    if(isset($_SESSION['admintdel']) and $_SESSION['admintdel'] == 'no'){
+        $_SESSION['status'] = "admin isn't Inactivated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['admintdel']);
+    }
+    if(isset($_SESSION['adminadd']) and $_SESSION['adminadd'] == 'yes'){
+        $_SESSION['status'] = "admin Added !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['adminadd']);
+    }
+    if(isset($_SESSION['adminadd']) and $_SESSION['adminadd'] == 'no'){
+        $_SESSION['status'] = "admin isn't Added !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['adminadd']);
+    }
+    if(isset($_SESSION['adminedit']) and $_SESSION['adminedit'] == 'yes'){
+        $_SESSION['status'] = "admin Updated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['adminedit']);
+    }
+    if(isset($_SESSION['adminedit']) and $_SESSION['adminedit'] == 'no'){
+        $_SESSION['status'] = "admin isn't Updated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['adminedit']);
+    }
 ?>
 <?php
 
@@ -21,27 +51,11 @@
         $inactive_admin_query = "UPDATE users SET IsActive = 0 , ModifiedDate = NOW() , ModifiedBy = ".$_SESSION['ID']." WHERE ID = $inactive_Admin_id";
         $inactive_admin = mysqli_query($connection , $inactive_admin_query);
         if($inactive_admin){
-            
-            ?>
-            <script>
-                        
-                alert("admin inactivated !!");
-                location.replace("manageadministrator.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['admintdel'] = "yes";
+            header("location:manageadministrator.php?admin=1");
         }else{
-            
-            ?>
-            <script>
-                        
-                alert("admin not inactivated !!");
-                location.replace("manageadministrator.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['admintdel'] = "no";
+            header("location:manageadministrator.php?admin=1");
         }
         
     }
@@ -344,7 +358,6 @@
         
 
 
-    </section>
 
     <!-- footer -->
     <section class="footer footer-admin">
@@ -366,6 +379,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

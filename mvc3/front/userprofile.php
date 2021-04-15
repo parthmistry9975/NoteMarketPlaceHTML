@@ -9,6 +9,12 @@
     if($_SESSION['ROLE'] != 3){
         header("location:../admin/admindashboard.php?admin=1");
     }
+    if(isset($_SESSION['formate_check']) and $_SESSION['formate_check'] == 'yes'){
+        $_SESSION['status1'] = "Profile is updated except profile picture.";
+        $_SESSION['status_text1'] = "profile pic should be in jpg,jpeg,png format only !!";
+        $_SESSION['status_code1'] = "success";
+        unset($_SESSION['formate_check']);
+    }
 ?>
 
 <?php
@@ -41,7 +47,13 @@
             $lastname = mysqli_real_escape_string($connection,$_POST['lastname'] );
             $emailid = mysqli_real_escape_string($connection,$_POST['emailid'] );
             $dob = mysqli_real_escape_string($connection,$_POST['dob'] );
+            if(!$dob){
+                $dob = NULL;
+            }
             $gender = mysqli_real_escape_string($connection,$_POST['gender'] );
+            if(!$gender){
+                $gender = 3;
+            }
             $countrycode = mysqli_real_escape_string($connection,$_POST['countrycode'] );
             $phonenumber = mysqli_real_escape_string($connection,$_POST['phonenumber'] );
             $profilepicture = $_FILES['profilepicture'];
@@ -74,17 +86,18 @@
                 }
 
                 $profilepicname = $profilepicture['name'];
-                if(!$profilepicname){
+                if(!isset($profilepicname)){
                     $profilepic_dest = "$path";  
                 }else{
                     $delete_pic = $_SESSION['profilepic_dest'];
-                    if(file_exists($delete_pic)){
-                        unlink($delete_pic);   
-                    }
                     $profilepic_ext = explode('.',$profilepicname);
                     $profilepic_ext_check = strtolower(end($profilepic_ext));
                     $valid_profilepic_ext = array('png','jpg','jpeg');
                     if(in_array($profilepic_ext_check,$valid_profilepic_ext)){
+                        
+                        if(file_exists($delete_pic)){
+                            unlink($delete_pic);   
+                        }
                         
                         $profilepicnewname = "pp_".date("dmyhis").'.'.$profilepic_ext_check;
                         $profilepicpath = $profilepicture['tmp_name'];
@@ -95,15 +108,45 @@
                         }
                         $profilepic_dest = "../upload/$loginid/profile/".$profilepicnewname;
                         move_uploaded_file($profilepicpath,$profilepic_dest);
+                        $update = "UPDATE user_profile SET DOB='$dob',Gender='$gender' , CountryCode='$countrycode', PhoneNumber='$phonenumber', ProfilePicture='$profilepic_dest',AddressLine1='$address1', AddressLine2='$address2' , City='$city' , State='$state' , ZipCode='$zipcode' , Country='$country' , University='$university', College='$college' , ModifiedDate=NOW() , ModifiedBy = '$loginid' where UserID = '$loginid'  "; 
+                        $updatequery = mysqli_query($connection,$update);
+
+                        if($updatequery){
+                        $_SESSION['dob'] = $dob;
+                        $_SESSION['gender'] = $gender;
+                        $_SESSION['countrycode'] = $countrycode;
+                        $_SESSION['phone'] = $phonenumber;
+                        $_SESSION['profilepic_dest'] = $profilepic_dest;
+                        $_SESSION['add1'] = $address1;
+                        $_SESSION['add2'] = $address2;
+                        $_SESSION['city'] = $city;
+                        $_SESSION['state'] = $state;
+                        $_SESSION['zipcode'] = $zipcode;
+                        $_SESSION['country'] = $country;
+                        $_SESSION['university'] = $university;
+                        $_SESSION['college'] = $college;
+                        $_SESSION['status'] = "profile updated successfully !!";
+                        $_SESSION['status_code'] = "success";
+                        
+                        }
+                        else{
+                        $_SESSION['status'] = "profile not updated !!";
+                        $_SESSION['status_code'] = "error";
+                        
+                        }
                         
                     }
                     else{
+                        $profilepic_dest = $_SESSION['profilepic_dest'];
+                        $_SESSION['formate_check'] = "yes";
                         ?>
-                        <script>alert("profile pic should be in jpg,jpeg,png format only");</script>
+                        <script>
+                            location.href = "userprofile.php";
+                        </script>
                         <?php
                     }
                 }
-
+                
                 $update = "UPDATE user_profile SET DOB='$dob',Gender='$gender' , CountryCode='$countrycode', PhoneNumber='$phonenumber', ProfilePicture='$profilepic_dest',AddressLine1='$address1', AddressLine2='$address2' , City='$city' , State='$state' , ZipCode='$zipcode' , Country='$country' , University='$university', College='$college' , ModifiedDate=NOW() , ModifiedBy = '$loginid' where UserID = '$loginid'  "; 
                 $updatequery = mysqli_query($connection,$update);
 
@@ -121,44 +164,16 @@
                 $_SESSION['country'] = $country;
                 $_SESSION['university'] = $university;
                 $_SESSION['college'] = $college;
-                ?>
-                <script>alert("profile updated successfully");</script>
-                <?php
+                $_SESSION['status'] = "profile updated successfully !!";
+                $_SESSION['status_code'] = "success";
+                        
                 }
                 else{
-                ?>
-                <script>alert("profile not updated ");</script>
-                <?php
+                $_SESSION['status'] = "profile not updated !!";
+                $_SESSION['status_code'] = "error";
+                        
                 }
-                
-            }else{
-                
-                $profilepicname = $profilepicture['name'];
-                if(!$profilepicname){
-                    $profilepic_dest = "";  
-                }else{
-                    $profilepic_ext = explode('.',$profilepicname);
-                    $profilepic_ext_check = strtolower(end($profilepic_ext));
-                    $valid_profilepic_ext = array('png','jpg','jpeg');
-                    if(in_array($profilepic_ext_check,$valid_profilepic_ext)){
-                    $profilepicnewname = "pp_".date("dmyhis").'.'.$profilepic_ext_check;
-                    $profilepicpath = $profilepicture['tmp_name'];
-                    if(!is_dir("../upload/$loginid/profile/")){
-                    mkdir("../upload/$loginid/profile/",0777,true);
-                    }
-                    $profilepic_dest = "../upload/$loginid/profile/".$profilepicnewname;
-                    move_uploaded_file($profilepicpath,$profilepic_dest);
-                    }
-                    else{
-                        ?>
-                        <script>alert("profile pic should be in jpg,jpeg,png format only");</script>
-                        <?php
-                    }
-                }
-                
-                $insert = "INSERT INTO user_profile(UserID, DOB, Gender, CountryCode, PhoneNumber,ProfilePicture,AddressLine1, AddressLine2, City, State, ZipCode, Country, University, College, CreatedBy) VALUES ($loginid,'$dob',$gender,'$countrycode',$phonenumber,'$profilepic_dest','$address1','$address2','$city','$state','$zipcode','$country','$university','$college','$loginid')";
-                $insertquery = mysqli_query($connection,$insert);
-                if($insertquery){
+
                 $_SESSION['dob'] = $dob;
                 $_SESSION['gender'] = $gender;
                 $_SESSION['countrycode'] = $countrycode;
@@ -172,15 +187,97 @@
                 $_SESSION['country'] = $country;
                 $_SESSION['university'] = $university;
                 $_SESSION['college'] = $college;
-                ?>
-                <script>alert("profile created successfully");</script>
-                <?php
+                
+                
+            }else{
+                
+                $profilepicname = $profilepicture['name'];
+                if(!isset($profilepicname)){
+                    $profilepic_dest = "";  
+                }else{
+                    $profilepic_ext = explode('.',$profilepicname);
+                    $profilepic_ext_check = strtolower(end($profilepic_ext));
+                    $valid_profilepic_ext = array('png','jpg','jpeg');
+                    if(in_array($profilepic_ext_check,$valid_profilepic_ext)){
+                    $profilepicnewname = "pp_".date("dmyhis").'.'.$profilepic_ext_check;
+                    $profilepicpath = $profilepicture['tmp_name'];
+                    if(!is_dir("../upload/$loginid/profile/")){
+                    mkdir("../upload/$loginid/profile/",0777,true);
+                    }
+                    $profilepic_dest = "../upload/$loginid/profile/".$profilepicnewname;
+                    move_uploaded_file($profilepicpath,$profilepic_dest);
+                    $insert = "INSERT INTO user_profile(UserID, DOB, Gender, CountryCode, PhoneNumber,ProfilePicture,AddressLine1, AddressLine2, City, State, ZipCode, Country, University, College, CreatedBy) VALUES ($loginid,'$dob','$gender','$countrycode',$phonenumber,'$profilepic_dest','$address1','$address2','$city','$state','$zipcode','$country','$university','$college','$loginid')";
+                    $insertquery = mysqli_query($connection,$insert);
+                    if($insertquery){
+                    $_SESSION['dob'] = $dob;
+                    $_SESSION['gender'] = $gender;
+                    $_SESSION['countrycode'] = $countrycode;
+                    $_SESSION['phone'] = $phonenumber;
+                    $_SESSION['profilepic_dest'] = $profilepic_dest;
+                    $_SESSION['add1'] = $address1;
+                    $_SESSION['add2'] = $address2;
+                    $_SESSION['city'] = $city;
+                    $_SESSION['state'] = $state;
+                    $_SESSION['zipcode'] = $zipcode;
+                    $_SESSION['country'] = $country;
+                    $_SESSION['university'] = $university;
+                    $_SESSION['college'] = $college;
+                    $_SESSION['status'] = "profile created successfully !!";
+                    $_SESSION['status_code'] = "success";
+                    $done = 1;
+                    }
+                    else{
+                    $_SESSION['status'] = "profile created successfully !!";
+                    $_SESSION['status_code'] = "success";
+                    
+                    }
+                    }
+                    else{
+                        $_SESSION['formate_check'] = "yes";
+                        header("location:userprofile.php");
+                    }
+                    
                 }
-                else{
-                ?>
-                <script>alert("profile not created");</script>
-                <?php
+                if($done != 1){
+                $insert = "INSERT INTO user_profile(UserID, DOB, Gender, CountryCode, PhoneNumber,ProfilePicture,AddressLine1, AddressLine2, City, State, ZipCode, Country, University, College, CreatedBy) VALUES ($loginid,'$dob','$gender','$countrycode',$phonenumber,'$profilepic_dest','$address1','$address2','$city','$state','$zipcode','$country','$university','$college','$loginid')";
+                    $insertquery = mysqli_query($connection,$insert);
+                    if($insertquery){
+                    $_SESSION['dob'] = $dob;
+                    $_SESSION['gender'] = $gender;
+                    $_SESSION['countrycode'] = $countrycode;
+                    $_SESSION['phone'] = $phonenumber;
+                    $_SESSION['profilepic_dest'] = $profilepic_dest;
+                    $_SESSION['add1'] = $address1;
+                    $_SESSION['add2'] = $address2;
+                    $_SESSION['city'] = $city;
+                    $_SESSION['state'] = $state;
+                    $_SESSION['zipcode'] = $zipcode;
+                    $_SESSION['country'] = $country;
+                    $_SESSION['university'] = $university;
+                    $_SESSION['college'] = $college;
+                    $_SESSION['status'] = "profile created successfully !!";
+                    $_SESSION['status_code'] = "success";
+                    }
+                    else{
+                    $_SESSION['status'] = "profile created successfully !!";
+                    $_SESSION['status_code'] = "success";
+
+                    }
                 }
+                    $_SESSION['dob'] = $dob;
+                    $_SESSION['gender'] = $gender;
+                    $_SESSION['countrycode'] = $countrycode;
+                    $_SESSION['phone'] = $phonenumber;
+                    $_SESSION['profilepic_dest'] = $profilepic_dest;
+                    $_SESSION['add1'] = $address1;
+                    $_SESSION['add2'] = $address2;
+                    $_SESSION['city'] = $city;
+                    $_SESSION['state'] = $state;
+                    $_SESSION['zipcode'] = $zipcode;
+                    $_SESSION['country'] = $country;
+                    $_SESSION['university'] = $university;
+                    $_SESSION['college'] = $college;
+                
                 
             }
         }
@@ -198,6 +295,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -254,10 +354,10 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
-                            $pp_file = "images/dashboard/eye.png";
+                            $pp_file = "images/default/profile/dp.jpg";
                         }
                         
                         ?>
@@ -326,13 +426,13 @@
                             <label for="gender">Gender</label>
                             <?php 
                             
-                                $gender_query = "SELECT ID,Value,RefCategory FROM reference_data WHERE RefCategory = 'Gender' AND IsActive = 1";
+                                $gender_query = "SELECT ID,Value,RefCategory FROM reference_data WHERE RefCategory = 'Gender' AND IsActive = 1 AND ID != 3";
                                 $gquery = mysqli_query($connection, $gender_query);
                                 $gqueryrows = mysqli_num_rows($gquery);
                             
                             ?>
                             <select id="gender" name="gender" class="form-control">
-                                <option>Select your gender</option>
+                                <option value="">Select your gender</option>
                                 <?php
                                 
                                     for($i=1;$i<=$gqueryrows;$i++){
@@ -355,7 +455,7 @@
                                 $ccqueryrows = mysqli_num_rows($ccquery);
                             
                             ?>
-                            <select id="countrycode" name="countrycode" class="form-control code">
+                            <select id="countrycode" name="countrycode" class="form-control code" required>
                                 <?php
                                 
                                     for($i=1;$i<=$ccqueryrows;$i++){
@@ -371,7 +471,7 @@
                         </div>
                         <div class="form-group col-md-4 col-sm-8">
                             <label for="phonenumber">&nbsp;</label>
-                            <input type="tel" pattern="[0-9]{7,}" title="only numbers are allowed must have 10 characters" name="phonenumber" class="form-control phone" id="phonenumber" value="<?php if(isset($_SESSION['phone'])){ echo $_SESSION['phone']; }?>" placeholder="Enter your phone number">
+                            <input type="tel" pattern="[0-9]{7,}" title="only numbers are allowed must have 10 characters" name="phonenumber" class="form-control phone" id="phonenumber" value="<?php if(isset($_SESSION['phone'])){ echo $_SESSION['phone']; }?>" placeholder="Enter your phone number" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -394,7 +494,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="address2">Address Line 2</label>
-                            <input type="text" title="must have 5 characters" name="address2" class="form-control" id="address2" placeholder="Enter your address" value="<?php if(isset($_SESSION['add2'])){ echo $_SESSION['add2']; }?>">
+                            <input type="text" title="must have 5 characters" name="address2" class="form-control" id="address2" placeholder="Enter your address" value="<?php if(isset($_SESSION['add2'])){ echo $_SESSION['add2']; }?>" required>
                         </div>
                     </div>
                     <div class="form-row">
@@ -467,15 +567,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -489,6 +613,49 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
+    <script>
+    <?php
+        if(isset($_SESSION['status1']) && $_SESSION['status1'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status1']; ?>",
+              text: "<?php echo $_SESSION['status_text1']; ?>",
+              icon: "<?php echo $_SESSION['status_code1']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code1']);
+            unset($_SESSION['status_text1']);
+            unset($_SESSION['status1']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

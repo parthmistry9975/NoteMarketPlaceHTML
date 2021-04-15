@@ -21,55 +21,8 @@ $(".toggle-password").click(function () {
 /* ==========================================
               navigation
 ===========================================*/
-function sticky_header() {
-    var header_height = jQuery('.navbar').innerHeight() / 2;
-    var scrollTop = jQuery(window).scrollTop();;
-    if (scrollTop > header_height) {
-        jQuery('body').addClass('sticky-nav')
-        $(".navbar img").attr("src", "images/home/PicsArt_12-23-12.15.33.png");
-        $(".navbar-profile .nav-item a img").attr("src", "images/user-profile/login-image.jpg");
-    } else {
-        jQuery('body').removeClass('sticky-nav')
-        $(".navbar img").attr("src", "images/login/top-logo.png");
-        $(".navbar-profile .navbar-brand img").attr("src", "images/user-profile/logo.png");
-        $(".navbar-profile .nav-item a img").attr("src", "images/user-profile/login-image.jpg");
-    }
-}
 
-jQuery(document).ready(function () {
-  sticky_header();
-});
 
-jQuery(window).scroll(function () {
-  sticky_header();  
-});
-jQuery(window).resize(function () {
-  sticky_header();
-});
-
-$('.navbar .navbar-toggler-icon i').click(function () {
-    iconName = $('.navbar .navbar-toggler-icon i').attr("class");
-    if (iconName == "fa fa-bars") {
-        $('.navbar .navbar-toggler-icon i').removeClass("fa fa-bars");
-        $('.navbar .navbar-toggler-icon i').addClass("fa fa-times");
-    }
-    else {
-        $('.navbar .navbar-toggler-icon i').removeClass("fa fa-times");
-        $('.navbar .navbar-toggler-icon i').addClass("fa fa-bars");
-    }
-});
-
-$('.navbar1 .navbar-toggler-icon i').click(function () {
-    iconName = $('.navbar1 .navbar-toggler-icon i').attr("class");
-    if (iconName == "fa fa-bars") {
-        $('.navbar1 .navbar-toggler-icon i').removeClass("fa fa-bars");
-        $('.navbar1 .navbar-toggler-icon i').addClass("fa fa-times");
-    }
-    else {
-        $('.navbar1 .navbar-toggler-icon i').removeClass("fa fa-times");
-        $('.navbar1 .navbar-toggler-icon i').addClass("fa fa-bars");
-    }
-});
 
 function toggleIcon(e) {
     $(e.target)

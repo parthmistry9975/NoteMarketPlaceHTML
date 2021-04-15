@@ -37,7 +37,7 @@
                 
                 while ($insert_note_attachment_record_row = mysqli_fetch_assoc($fetch_note_attachment_records)){
                     
-                    $insert_download_entry_query = "INSERT INTO downloads ( NoteID , Seller , Downloader , IsSellerHasAllowedDownload ,  IsAttachmentDownloaded , IsPaid , PurchasedPrice , NoteTitle , NoteCategory , CreatedBy ) VALUES ( '$noteid_4_download_entry' , '$insert_sellerid' , '$loginid' , 0 , 0 , '$insert_ispaid' , '$insert_noteprice' , '$insert_notetitle' , '$insert_notecategory' , '$loginid')";
+                    $insert_download_entry_query = "INSERT INTO downloads ( NoteID , Seller , Downloader , IsSellerHasAllowedDownload ,  IsAttachmentDownloaded , IsPaid , PurchasedPrice , NoteTitle , NoteCategory , CreatedBy ) VALUES ( '$noteid_4_download_entry' , '$insert_sellerid' , '$loginid' , 0 , 0 , $insert_ispaid , $insert_noteprice , '$insert_notetitle' , '$insert_notecategory' , '$loginid')";
                     $insert_download_entry = mysqli_query($connection ,$insert_download_entry_query);
                     
                 }

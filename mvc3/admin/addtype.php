@@ -148,23 +148,11 @@
                 $add_type_query = "INSERT INTO note_types( Name , Description , CreatedBy ) VALUES ( '$typename' , '$typedescription' , $loginid)";
                 $add_type = mysqli_query($connection , $add_type_query);
                 if($add_type){
-                    ?>
-                    <script>
-                        
-                        alert("type added !!");
-                        location.replace("managetype.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['typeadd'] = "yes";
+                    header("location:managetype.php?admin=1");
                 }else{
-                    ?>
-                    <script>
-                        
-                        alert("type not added !!");
-                        location.replace("managetype.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['typeadd'] = "no";
+                    header("location:managetype.php?admin=1");
                 }
             }
             
@@ -177,23 +165,11 @@
                 $edit_type_query = "UPDATE note_types SET Name = '$typename' , Description = '$typedescription', ModifiedDate = NOW() , ModifiedBy = $loginid WHERE ID = $edit_typeid";
                 $edit_type = mysqli_query($connection , $edit_type_query);
                 if($edit_type){
-                    ?>
-                    <script>
-                        
-                        alert("type updated !!");
-                        location.replace("managetype.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['typeedit'] = "yes";
+                    header("location:managetype.php?admin=1");
                 }else{
-                    ?>
-                    <script>
-                        
-                        alert("category not updated !!");
-                        location.replace("managetype.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['typeedit'] = "no";
+                    header("location:managetype.php?admin=1");
                 }
             }
         

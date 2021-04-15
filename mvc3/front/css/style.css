@@ -390,7 +390,6 @@ p {
     line-height: 38px;
 }
 
-.form-center .login-heading p,
 .forgot-form .forgot-heading p,
 .change-form .change-heading p{
     color:#333333;
@@ -399,6 +398,21 @@ p {
     font-family: "Open Sans",sans-serif;
     font-weight: 400;
     line-height: 19px;
+}
+
+.form-center .login-heading p{
+    color:#333333;
+    font-size: 13px;
+    margin-bottom: 45px;
+    font-family: "Open Sans",sans-serif;
+    font-weight: 400;
+    line-height: 20px;
+}
+.form-center .login-heading p i {
+    color: green;
+    font-size: 15px;
+    border-radius: 2px;
+    border-color: green;
 }
 
 .form-center form label,
@@ -1261,7 +1275,8 @@ set-box-shadow-cicis-menu-to-go {
     margin: 25px 0;
 }
 #notedetails button{
-    width: 170px;
+    display: block;
+    display: inline-block;
     height: 35px;
     border-radius: 3px;
     color: #fff;
@@ -1279,17 +1294,11 @@ set-box-shadow-cicis-menu-to-go {
     
     color: #6255a5;
     font-weight: 600;
-    margin-left: 100px;
+    margin-left: 0px;
     line-height: 18px;
     font-size: 14px;
     text-align: right;
     
-}
-.
-#red-text{
-    color: red;
-    font-size: 14px;
-    margin-left: 140px;
 }
 
 #notepreview h4{
@@ -2057,7 +2066,8 @@ set-box-shadow-cicis-menu-to-go {
 }
 
 .purple {
-    color: 6255a5;
+    color: 6255a5 !important;
+    font-weight: 600 !important;
 }
 
 #reject-modal .reject-form-heading h5{

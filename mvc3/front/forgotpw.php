@@ -54,25 +54,16 @@
                     $mail->AltBody = 'reset password
                                       password : '.$new_pass;
                     $mail->send();
-                    ?>
-                    <script>
-                        
-                        alert("password reset , check your mail !!");
-                        window.location.href = "login.php";
-                        
-                    </script>
-                    <?php
+                    $_SESSION['showpassreset'] = "yes";
+                    header("location:login.php");
                 } catch (Exception $e) {
                     echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
                 }
                 
             }
         }else {
-            ?>
-            <script>
-                alert("invalid emailid!! not registered");
-            </script>
-            <?php
+            $_SESSION['status'] = "Not registered !! register your self";
+            $_SESSION['status_code'] = "error";
         }
     }
 
@@ -88,8 +79,10 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
-
 	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
+
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -154,6 +147,28 @@
 
     <!-- bootstrap js -->
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

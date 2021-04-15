@@ -19,6 +19,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -49,7 +52,7 @@
     <!-- navigation -->
     <section id="nav-bar">
         <nav class="navbar navbar-expand-lg">
-            <a class="navbar-brand" href="index.php"><img src="images/dashboard/eye.png"></a>
+            <a class="navbar-brand" href="index.php"><img id="navbarimg" src="images/dashboard/eye.png"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
             </button>
@@ -61,6 +64,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
+                    <?php
+                    
+                    if(isset($_SESSION['ID'])){
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                            </li>
+                        <?php
+                    }
+                    ?>
                     <li class="nav-item">
                         <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
@@ -69,30 +82,29 @@
                     </li>
                     <?php
                     
-                    if(isset($_SESSION['ID'])){
-                        ?>
-                        <li class="nav-item"><a href="logout.php"><button type="button" class="btn btn-primary btn_login">Logout</button></a></li>
-                        <?php
-                    }else{
-                        ?>
-                        <li class="nav-item"><a href="login.php"><button type="button" class="btn btn-primary btn_login">Login</button></a></li>
-                        <?php
-                    }
-                    
-                    
 //                    if(isset($_SESSION['ID'])){
-//                        $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
-//                        $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
-//                        $image_path = mysqli_fetch_assoc($fetch_image_path);
-//                        if(isset($image_path['ProfilePicture'])){
-//                            $pp_file = $image_path['ProfilePicture'];
-//                        }else{
-//                            $pp_file = "images/default/profile/dp.jpg";
-//                        }
+                        ?>
+<!--                        <li class="nav-item"><a href="logout.php"><button type="button" class="btn btn-primary btn_login">Logout</button></a></li>-->
+                        <?php
+//                    }else{
+                        ?>
+<!--                        <li class="nav-item"><a href="login.php"><button type="button" class="btn btn-primary btn_login">Login</button></a></li>-->
+                        <?php
+//                    }
+                    
+                    
+                    if(isset($_SESSION['ID'])){
+                        $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
+                        $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
+                        $image_path = mysqli_fetch_assoc($fetch_image_path);
+                        if(!empty($image_path['ProfilePicture'])){
+                            $pp_file = $image_path['ProfilePicture'];
+                        }else{
+                            $pp_file = "images/default/profile/dp.jpg";
+                        }
                         
                         ?>
-<!--
-                           <li class='nav-item dropdown'><a class='nav-link' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><img src="images/default/profile/dp.jpg" alt="">
+                           <li class='nav-item dropdown'><a class='nav-link' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><img src="<?php echo $pp_file; ?>" alt="">
                             <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
                                 <a class='dropdown-item' href='userprofile.php'>My Profile</a>
                                 <a class='dropdown-item' href='mydownloads.php'>My Downloads</a>
@@ -102,13 +114,12 @@
                                 <a class='dropdown-item purple' href='logout.php'>LOGOUT</a>
                             </div>
                         </a></li><li class="nav-item"><a href="logout.php"><button type="button" class="btn btn-primary btn_login">Logout</button></a></li>
--->
                         <?php
-//                    }else{
+                    }else{
                         ?>
-<!--                        <li class="nav-item"><a href="login.php"><button type="button" class="btn btn-primary btn_login">Login</button></a></li>-->
+                        <li class="nav-item"><a href="login.php"><button type="button" class="btn btn-primary btn_login">Login</button></a></li>
                         <?php
-//                    }
+                    }
                     
                     ?>
                 </ul>
@@ -128,7 +139,7 @@
                     <span class="heading">or Sale your Book</span>
                     <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus debitis adipisci ad quae<br> reprehenderit voluptatem nemo eos, totam nulla animi voluptatum.</p>
                     <div class="overlay-btn">
-                        <button type="button" class="btn btn-outline-light">LEARN MORE</button>
+                        <button type="button" onclick="window.location.href='faq.php'" class="btn btn-outline-light">LEARN MORE</button>
                     </div>
                 </div>
             </div>
@@ -177,7 +188,7 @@
 	                        <p>Get Material For your <br>Cource etc.</p>
 	                    </div>
 	                    <div class="work-btn">
-	                        <a href="#"><button type="button" class="btn btn-primary work-btn" id="btn1"><p>Download</p></button></a>
+	                        <a href="#"><button type="button" onclick="window.location.href='searchnotes.php'" class="btn btn-primary work-btn" id="btn1"><p>Download</p></button></a>
 	                    </div>
 	                       
 	                </div>
@@ -192,7 +203,7 @@
 	                        <p>Upload and Download Cource <br> and Materials etc.</p>
 	                    </div>
 	                    <div class="work-btn">
-	                        <a href="#"><button type="button" class="btn btn-primary work-btn" id="btn2"><p>Sell Book</p></button></a>
+	                        <a href="#"><button type="button" onclick="window.location.href='userdashboard.php'" class="btn btn-primary work-btn" id="btn2"><p>Sell Book</p></button></a>
 	                    </div>
 
 	                </div>
@@ -290,15 +301,36 @@
                 </div>
                 <div class="col-md-6 col-sm-6 col-xs-12 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
                             </a>
                         </li>
-                        <li><a href="#">
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
                             </a>
                         </li>
-                        <li><a href="#">
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
                             </a>
                         </li>
@@ -318,6 +350,57 @@
 
     <!-- custom js -->
     <script src="js/script.js"></script>
+    <script>
+    
+    function sticky_header() {
+                    var header_height = jQuery('.navbar').innerHeight() / 2;
+                    var scrollTop = jQuery(window).scrollTop();;
+                    if (scrollTop > header_height) {
+                        jQuery('body').addClass('sticky-nav')
+                        $(".navbar #navbarimg").attr("src", "images/home/PicsArt_12-23-12.15.33.png");
+                    } else {
+                        jQuery('body').removeClass('sticky-nav')
+                        $(".navbar #navbarimg").attr("src", "images/login/top-logo.png");
+                    }
+                }
+
+                jQuery(document).ready(function () {
+                  sticky_header();
+                });
+
+                jQuery(window).scroll(function () {
+                  sticky_header();  
+                });
+                jQuery(window).resize(function () {
+                  sticky_header();
+                });
+
+                $('.navbar .navbar-toggler-icon i').click(function () {
+                    iconName = $('.navbar .navbar-toggler-icon i').attr("class");
+                    if (iconName == "fa fa-bars") {
+                        $('.navbar .navbar-toggler-icon i').removeClass("fa fa-bars");
+                        $('.navbar .navbar-toggler-icon i').addClass("fa fa-times");
+                    }
+                    else {
+                        $('.navbar .navbar-toggler-icon i').removeClass("fa fa-times");
+                        $('.navbar .navbar-toggler-icon i').addClass("fa fa-bars");
+                    }
+                });
+                
+                $('.navbar1 .navbar-toggler-icon i').click(function () {
+                iconName = $('.navbar1 .navbar-toggler-icon i').attr("class");
+                if (iconName == "fa fa-bars") {
+                    $('.navbar1 .navbar-toggler-icon i').removeClass("fa fa-bars");
+                    $('.navbar1 .navbar-toggler-icon i').addClass("fa fa-times");
+                }
+                else {
+                    $('.navbar1 .navbar-toggler-icon i').removeClass("fa fa-times");
+                    $('.navbar1 .navbar-toggler-icon i').addClass("fa fa-bars");
+                }
+            });
+    
+    </script>
+    
 
 </body>
 </html>

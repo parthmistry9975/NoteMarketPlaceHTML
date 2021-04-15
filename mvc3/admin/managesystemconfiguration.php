@@ -12,9 +12,30 @@
     if($_SESSION['ROLE'] != 1){
         header("location:admindashboard.php?admin=1");
     }
+    if(isset($_SESSION['updaterecord']) and $_SESSION['updaterecord'] == 'yes'){
+        $_SESSION['status'] = "Record Updated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['updaterecord']);
+    }
+    if(isset($_SESSION['profilerecord']) and $_SESSION['profilerecord'] == 'yes'){
+        $_SESSION['status'] = "profile pic should be in jpg format only";
+        $_SESSION['status_code'] = "warning";
+        unset($_SESSION['profilerecord']);
+    }
+    if(isset($_SESSION['noterecord']) and $_SESSION['noterecord'] == 'yes'){
+        $_SESSION['status'] = "Note pic should be in jpg format only";
+        $_SESSION['status_code'] = "warning";
+        unset($_SESSION['noterecord']);
+    }
+    if(isset($_SESSION['bothrecord']) and $_SESSION['bothrecord'] == 'yes'){
+        $_SESSION['status'] = "Note and Profile both should be in jpg format only";
+        $_SESSION['status_code'] = "warning";
+        unset($_SESSION['noterecord']);
+    }
 ?>
 <?php
     if(isset($_POST['submit'])){
+        
         $smail= mysqli_real_escape_string($connection,$_POST['supportemail'] );
         $sphone= mysqli_real_escape_string($connection,$_POST['supportphonenumber'] );
         $emails= mysqli_real_escape_string($connection,$_POST['email'] );
@@ -24,59 +45,48 @@
         $notep= $_FILES['defaultnote'];
         $profilep= $_FILES['defaultprofile'];
 
-        if(!$profilep['name']){
-            $f1_query = "SELECT Value FROM system_configurations WHERE ID = 5";
-            $f1_data = mysqli_query($connection , $f1_query);
-            $file1 = $f1_data['Value'];
-            unlink($file1);
-        }
-
-
+        
         $profilepname = $profilep['name'];
         $profilep_ext = explode('.',$profilepname);
         $profilep_ext_check = strtolower(end($profilep_ext));
-        $valid_profilep_ext = array('png','jpg','jpeg');
+        $valid_profilep_ext = array('jpg');
             if(in_array($profilep_ext_check,$valid_profilep_ext)){
+                $file1 = "../front/images/default/profile/dp.jpg";
+                unlink($file1);
                 $profilepnewname = 'dp.'.$profilep_ext_check;
-                $profileppath = $pp['tmp_name'];
+                $profileppath = $profilep['tmp_name'];
                 if(!is_dir("../front/images/default/profile/")){
                     mkdir("../front/images/default/profile/",0777,true);
                 }
                 $profilep_dest = '../front/images/default/profile/'.$profilepnewname;
                 move_uploaded_file( $profileppath , $profilep_dest );
             }else{
-
-                ?>
-                <script>
-                    alert("profile pic should be in jpg , jpeg , png format only");
-                </script>
-                <?php
+                $profilep_dest = '../front/images/default/profile/dp.jpg';
+                $_SESSION['profilerecord'] = 'yes';
             }
-        if(!$notep['name']){
-            $f2_query = "SELECT Value FROM system_configurations WHERE ID = 4";
-            $f2_data = mysqli_query($connection , $f2_query);
-            $file2 = $f2_data['Value'];
-            unlink($file2);
-        }
 
         $notepname = $notep['name'];
         $notep_ext = explode('.',$notepname);
         $notep_ext_check = strtolower(end($notep_ext));
-        $valid_notep_ext = array('png','jpg','jpeg');
+        $valid_notep_ext = array('jpg');
         if(in_array($notep_ext_check,$valid_notep_ext)){
+            $file2 = "../front/images/default/note/dnp.jpg";
+            unlink($file2);
             $notepnewname = 'dnp.'.$notep_ext_check;
-            $noteppath = $np['tmp_name'];
+            $noteppath = $notep['tmp_name'];
             if(!is_dir("../front/images/default/note/")){
                 mkdir("../front/images/default/note/",0777,true);
             }
             $notep_dest = '../front/images/default/note/'.$notepnewname;
             move_uploaded_file($noteppath,$notep_dest);
         }else{
-            ?>
-            <script>
-                alert("Note pic should be in jpg , jpeg , png format only");
-            </script>
-            <?php
+            $notep_dest = "../front/images/default/note/dnp.jpg";
+            $_SESSION['noterecord'] = 'yes';
+            if(isset($_SESSION['profilerecord'])){
+                $_SESSION['bothrecord'] = "yes";
+                unset($_SESSION['profilerecord']);
+                unset($_SESSION['noterecord']);
+            }
         }
         $u1 = mysqli_query($connection,"update system_configurations SET Value='$smail' , ModifiedDate = NOW() , ModifiedBy = ".$_SESSION['ID']." where ID=1");
         $u2 = mysqli_query($connection,"update system_configurations SET Value='$sphone' , ModifiedDate = NOW() , ModifiedBy = ".$_SESSION['ID']." where ID=2");
@@ -89,7 +99,8 @@
 
 
         if($u1 and $u2 and $u3 and $u4 and $u5 and $u6){
-            header("location:admindashboard.php?admin=1");
+            $_SESSION['updaterecord'] = 'yes';
+            header("location:managesystemconfiguration.php?admin=1");
         }
     }
 
@@ -118,6 +129,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -295,7 +309,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="defaultnote">Default image for notes (if seller do not upload)</label>
-                            <input type="file" name="defaultnote" class="form-control-file pp-upload" id="pp">
+                            <input type="file" name="defaultnote" class="form-control-file pp-upload" id="pp" required>
                         </div>
                         <div class="form-group col-md-6">
                             
@@ -304,7 +318,7 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="defaultprofile">Default profile picture (if seller do not upload)</label>
-                            <input type="file" name="defaultprofile" class="form-control-file pp-upload" id="pp">
+                            <input type="file" name="defaultprofile" class="form-control-file pp-upload" id="pp" required>
                         </div>
                         <div class="form-group col-md-6">
                             
@@ -335,6 +349,27 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

@@ -21,6 +21,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -63,6 +66,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
+                    <?php
+                    
+                    if(isset($_SESSION['ID'])){
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                            </li>
+                        <?php
+                    }
+                    ?>
                     <li class="nav-item">
                         <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
@@ -75,7 +88,7 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
                             $pp_file = "images/default/profile/dp.jpg";
@@ -165,7 +178,6 @@
                 ?>
                 <script>
 
-                    alert('note is deleted');
                     location.replace("userdashboard.php");
 
                 </script>
@@ -181,8 +193,18 @@
                             <?php
                             
                                 $displaypicname = $note_general_data['displaypicname'];
-                                $sellerid = $note_general_data['sellerid'] ;  
-                                $displaypicpath = "../upload/$sellerid/$noteid/$displaypicname";
+                                $sellerid = $note_general_data['sellerid'] ;
+                                
+                                if(!empty($displaypicname)){
+
+                                    $displaypicpath = "../upload/$sellerid/$noteid/$displaypicname";
+
+                                }else{
+
+                                    $displaypicpath = "images/default/note/dnp.jpg";
+                                
+                                }
+
                             
                             ?>
                             <img src="<?php echo $displaypicpath; ?>" alt="book" class="img-fluid" style="height: 300px">
@@ -262,18 +284,18 @@
                         </div>
                         <div class="col-md-5 col-6">
                             <div class="details-info">
-                                <p><?php echo $note_general_data['UniversityName']; ?></p>
-                                <p><?php echo $note_general_data['countryname']; ?></p>
-                                <p><?php echo $note_general_data['coursename']; ?></p>
-                                <p><?php echo $note_general_data['coursecode']; ?></p>
-                                <p><?php echo $note_general_data['professor']; ?></p>
+                                <p id="uniname"><?php if(!empty($note_general_data['UniversityName'])) {echo $note_general_data['UniversityName']; }else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['countryname'])) {echo $note_general_data['countryname']; }else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['coursename'])) {echo $note_general_data['coursename']; }else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['coursecode'])) {echo $note_general_data['coursecode']; }else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['professor'])) {echo $note_general_data['professor']; }else{ echo "-";} ?></p>
                                 <p><?php echo $note_general_data['pages']; ?></p>
                                 <p class="<?php if(empty($note_general_data['publisheddate'])){ echo "text-right";} ?>">
                                     <?php 
                                         if(empty($note_general_data['publisheddate'])){
                                             echo "-";
                                         }else{
-                                            echo $note_general_data['publisheddate'];
+                                            echo date("M d Y", strtotime($note_general_data['publisheddate']));
                                         }
                                     ?>
                                 </p>
@@ -296,7 +318,7 @@
                         </div>
                     </div>
                     <div class="row"> 
-                        <p id="red-text">
+                        <p style="color: red;font-size: 14px;margin-left: 140px;">
                         <?php
                             
                             if($note_report_data >= 1){
@@ -358,6 +380,10 @@
                     
                             $fetch_customer_review_query = "SELECT users.ID AS reviewerid , users.FirstName AS reviewerfname , users.LastName AS reviewerlname , user_profile.ProfilePicture AS profilepicname , seller_notes_reviews.Ratings , seller_notes_reviews.Comments AS comments FROM seller_notes_reviews INNER JOIN users ON users.ID = seller_notes_reviews.ReviewedByID INNER JOIN user_profile ON user_profile.UserID = seller_notes_reviews.ReviewedByID WHERE seller_notes_reviews.NoteID = $noteid AND seller_notes_reviews.IsActive = 1";
                             $fetch_customer_review = mysqli_query($connection ,$fetch_customer_review_query);
+                            $check_comment = mysqli_num_rows($fetch_customer_review);
+                            if($check_comment == 0 ){
+                                echo "<h1 class='text-center' style='color:#6255a5;margin-top:150px;font-weight:600;'> 0 Reviews</h1>";
+                            }else{
                             while($review_row = mysqli_fetch_assoc($fetch_customer_review)){
 
                         ?>
@@ -366,10 +392,11 @@
                             <div class="col-md-2">
                                 <?php 
                                 
-                                
-                                $profilepicname = $review_row['profilepicname'];
-                                $reviewerid = $review_row['reviewerid'] ;  
-                                $displaypicpath = "../upload/$reviewerid/profile/$profilepicname";
+                                if(isset($review_row['profilepicname'])){
+                                    $displaypicpath = $review_row['profilepicname'];
+                                }else{
+                                    $displaypicpath = 'images/default/profile/dp.jpg';
+                                }
                                 
                                 
                                 ?>
@@ -408,6 +435,7 @@
                         </div>
                         <?php
                             }
+                            }
                         ?>
 
                         
@@ -421,7 +449,7 @@
 	
 	<!-- footer -->
     <section class="footer">
-        <div class="container">
+        <div class="container-fluid">
             <hr>
             <div class="row">
                 <div class="col-md-6 footer_content">
@@ -429,15 +457,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -451,6 +503,28 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

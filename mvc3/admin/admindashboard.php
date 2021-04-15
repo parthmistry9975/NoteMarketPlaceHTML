@@ -9,6 +9,26 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['adminunpublish']) and $_SESSION['adminunpublish'] == 'yes'){
+        $_SESSION['status'] = "note Unpublished !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['adminunpublish']);
+    }
+    if(isset($_SESSION['adminunpublish']) and $_SESSION['adminunpublish'] == 'no'){
+        $_SESSION['status'] = "note isn't Unpublished !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['adminunpublish']);
+    }
+    if(isset($_SESSION['approve-note']) and $_SESSION['approve-note'] == 'yes'){
+        $_SESSION['status'] = "note published !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['approve-note']);
+    }
+    if(isset($_SESSION['approve-note']) and $_SESSION['approve-note'] == 'no'){
+        $_SESSION['status'] = "note isn't published !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['approve-note']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -244,7 +264,7 @@
                         $mail->addReplyTo($config_email, 'Note Market Place');
 
                         $mail->IsHTML(true);
-                        $mail->Subject = "About your note unpublished on NotesMarketplace";
+                        $mail->Subject = "Sorry! We need to remove your notes from our portal.";
                         $mail->Body = "Hello ".$seller_firstname." ".$seller_lastname.", <br><br>We want to inform you that, your note $notetitle has been removed from the portal.Please find our remarks as below -<br>$comment<br><br>Regards,<br>Notes Marketplace";
                         $mail->AltBody = 'see your note unpublished on portal';
 
@@ -253,20 +273,12 @@
                         echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
                     }
                 
-            ?>
-                <script>
-                    alert("note unpublished !!");
-                    window.history.back();
-                </script>
-            <?php
+                $_SESSION['status'] = "note unpublished !!";
+                $_SESSION['status_code'] = "success";
             }
             else{
-            ?>
-                <script>
-                    alert("note not unpublished !! ");
-                    window.history.back();
-                </script>
-            <?php
+                $_SESSION['status'] = "note isn't unpublished !!";
+                $_SESSION['status_code'] = "error";
             }
             
             
@@ -443,7 +455,7 @@
                             <td><?php echo date("d-m-Y, h:i", strtotime($progress_row['publisheddate'])); ?></td>
                             <td class="purple-color" onclick="window.location.href='downloadednotes.php?admin=1&noteid=<?php echo $noteid;?>'"><?php
                                 
-                                    $fetch_download_note_num = "SELECT * FROM downloads WHERE NoteID = $noteid AND IsAttachmentDownloaded = 1 AND AttachmentDownloadedDate > NOW() - INTERVAL 7 day GROUP BY NoteID,Downloader";
+                                    $fetch_download_note_num = "SELECT * FROM downloads WHERE NoteID = $noteid AND IsSellerHasAllowedDownload = 1  GROUP BY NoteID,Downloader";
                                     $download_note_num = mysqli_query($connection , $fetch_download_note_num);
                                     $download_note_counter = mysqli_num_rows($download_note_num);
                                     echo $download_note_counter;
@@ -489,7 +501,29 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
 
+   <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
+   
     <!-- custom js -->
     <script src="js/script.js"></script>
     <script>

@@ -191,7 +191,11 @@
                             
                                 $displaypicname = $note_general_data['displaypicname'];
                                 $sellerid = $note_general_data['sellerid'] ;  
-                                $displaypicpath = "../upload/$sellerid/$noteid/$displaypicname";
+                                if($displaypicname == ""){
+                                    $displaypicpath = "../front/images/default/note/dnp.jpg";
+                                }else{
+                                    $displaypicpath = "../upload/$sellerid/$noteid/$displaypicname";
+                                }
                             
                             ?>
                             <img src="<?php echo $displaypicpath; ?>" alt="book" class="img-fluid" style="height: 300px">
@@ -201,18 +205,6 @@
                             <p><span><?php echo $note_general_data['notecategory']; ?></span></p>
                             <p id="review"><?php echo $note_general_data['notedescription']; ?></p>
                             <a class="download-button" href="download.php?noteid=<?php echo $noteid; ?>"><button role="button" class="btn btn-primary">DOWNLOAD</button></a>
-                            
-                            
-<!--//                          -->
-                           
-                            
-                            <script>
-                            
-                                document.getElementById("openlogin").onclick = function (){
-                                  location.href ="login.php";  
-                                };
-                            
-                            </script>
 
                         </div>
                     </div>
@@ -233,11 +225,11 @@
                         </div>
                         <div class="col-md-5 col-6">
                             <div class="details-info">
-                                <p><?php echo $note_general_data['UniversityName']; ?></p>
-                                <p><?php echo $note_general_data['countryname']; ?></p>
-                                <p><?php echo $note_general_data['coursename']; ?></p>
-                                <p><?php echo $note_general_data['coursecode']; ?></p>
-                                <p><?php echo $note_general_data['professor']; ?></p>
+                                <p><?php if(!empty($note_general_data['UniversityName'])){ echo $note_general_data['UniversityName']; }else{ echo "-"; } ?></p>
+                                <p><?php if(!empty($note_general_data['countryname'])){echo $note_general_data['countryname'];}else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['coursename'])){echo $note_general_data['coursename'];}else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['coursecode'])){echo $note_general_data['coursecode'];}else{ echo "-";} ?></p>
+                                <p><?php if(!empty($note_general_data['professor'])){echo $note_general_data['professor'];}else{ echo "-";} ?></p>
                                 <p><?php echo $note_general_data['pages']; ?></p>
                                 <p class="<?php if(empty($note_general_data['publisheddate'])){ echo "text-right";} ?>">
                                     <?php 
@@ -329,6 +321,10 @@
                     
                             $fetch_customer_review_query = "SELECT seller_notes_reviews.ID AS reviewid, users.ID AS reviewerid , users.FirstName AS reviewerfname , users.LastName AS reviewerlname , user_profile.ProfilePicture AS profilepicname , seller_notes_reviews.Ratings , seller_notes_reviews.Comments AS comments FROM seller_notes_reviews INNER JOIN users ON users.ID = seller_notes_reviews.ReviewedByID INNER JOIN user_profile ON user_profile.UserID = seller_notes_reviews.ReviewedByID WHERE seller_notes_reviews.NoteID = $noteid AND seller_notes_reviews.IsActive = 1";
                             $fetch_customer_review = mysqli_query($connection ,$fetch_customer_review_query);
+                            $check_comment = mysqli_num_rows($fetch_customer_review);
+                            if($check_comment == 0 ){
+                                echo "<h1 class='text-center' style='color:#6255a5;margin-top:150px;font-weight:600;'> 0 Reviews</h1>";
+                            }else{
                             while($review_row = mysqli_fetch_assoc($fetch_customer_review)){
 
                         ?>
@@ -340,7 +336,11 @@
                                 $reviewid = $review_row['reviewid'];
                                 $profilepicname = $review_row['profilepicname'];
                                 $reviewerid = $review_row['reviewerid'] ;  
-                                $displaypicpath = "../upload/$reviewerid/profile/$profilepicname";
+                                if(!empty($profilepicname)){
+                                    $displaypicpath = $profilepicname;   
+                                }else{
+                                    $displaypicpath = "../front/images/default/profile/dp.jpg";
+                                }
                                 
                                 
                                 ?>
@@ -378,6 +378,7 @@
 
                         </div>
                         <?php
+                            }
                             }
                         ?>
 

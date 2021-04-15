@@ -64,36 +64,17 @@
                     $mail->Body = "Hello ".$firstname." ".$lastname.",<br><br>NoteMarketPlace has added you as a admin please login in to portal via given link with this password: $new_pass <br>Portal Link : <a href = 'http://localhost/NoteMarketPlaceHTML/front/login.php' > NoteMarketPlace</a>";
                     $mail->AltBody = 'reset password
                                       password : '.$new_pass;
+                    $_SESSION['adminadd'] = "yes";
                     $mail->send();
-                    
-                    ?>
-                    <script>
-                    
-                        
-                        alert("Admin Added !!");
-                        location.replace("admindashboard.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    header("location:manageadministrator.php?admin=1");
                 } catch (Exception $e) {
                     echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
                 }
                 
             }else{
-                    ?>
-                    <script>
-                        
-                        alert("admin not added !!");
-                        window.history.back();
-                        
-                    </script>
-                    <?php
+                $_SESSION['adminadd'] = "no";
+                header("location:manageadministrator.php?admin=1");
             }
-            
-            
-                
-                
-            
         }
 
         if(isset($_POST['edit'])){
@@ -112,7 +93,8 @@
             $edit_admin1 = mysqli_query($connection , $edit_admin_query1);
             
             if($edit_admin && $edit_admin1){
-                
+                $_SESSION['adminedit'] = "yes";
+                header("location:manageadministrator.php?admin=1");
                     ?>
                     <script>
                         
@@ -123,20 +105,9 @@
                     <?php
                 
             }else{
-                    ?>
-                    <script>
-                        
-                        alert("admin details isn't edited !!");
-                        location.replace("manageadministrator.php?admin=1");
-                        
-                    </script>
-                    <?php
+                $_SESSION['adminedit'] = "no";
+                header("location:manageadministrator.php?admin=1");
             }
-            
-            
-                
-                
-            
         }
 
 ?>

@@ -9,6 +9,36 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['countrytdel']) and $_SESSION['countrytdel'] == 'yes'){
+        $_SESSION['status'] = "country Inactivated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['countrytdel']);
+    }
+    if(isset($_SESSION['countrytdel']) and $_SESSION['countrytdel'] == 'no'){
+        $_SESSION['status'] = "country isn't Inactivated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['countrytdel']);
+    }
+    if(isset($_SESSION['countryadd']) and $_SESSION['countryadd'] == 'yes'){
+        $_SESSION['status'] = "country Added !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['countryadd']);
+    }
+    if(isset($_SESSION['countryadd']) and $_SESSION['countryadd'] == 'no'){
+        $_SESSION['status'] = "country isn't Added !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['countryadd']);
+    }
+    if(isset($_SESSION['countryedit']) and $_SESSION['countryedit'] == 'yes'){
+        $_SESSION['status'] = "country Updated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['countryedit']);
+    }
+    if(isset($_SESSION['countryedit']) and $_SESSION['countryedit'] == 'no'){
+        $_SESSION['status'] = "country isn't Updated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['countryedit']);
+    }
 ?>
 <?php
 
@@ -18,27 +48,11 @@
         $inactive_country_query = "UPDATE countries SET IsActive = 0 , ModifiedDate = NOW() , ModifiedBy = ".$_SESSION['ID']." WHERE ID = $inactive_country_id";
         $inactive_country = mysqli_query($connection , $inactive_country_query);
         if($inactive_country){
-            
-            ?>
-            <script>
-                        
-                alert("country inactivated !!");
-                location.replace("managecountry.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['countrytdel'] = "yes";
+            header("location:managecountry.php?admin=1");
         }else{
-            
-            ?>
-            <script>
-                        
-                alert("coutry not inactivated !!");
-                location.replace("managecountry.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['countrytdel'] = "no";
+            header("location:managecountry.php?admin=1");
         }
         
     }
@@ -347,6 +361,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

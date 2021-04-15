@@ -35,33 +35,20 @@
                     $update_pw_query = "UPDATE users SET Password = '$Pass' WHERE ID = $loginid";
                     $update_pw = mysqli_query($connection, $update_pw_query);
                     if($update_pw){
-                        ?>
-                        <script>
-                            alert("password updated !!");
-                            window.location = "userdashboard.php";
-                        </script>
-                        <?php 
+                            $_SESSION['showsetpassword'] = "yes";
+                            header("location:userdashboard.php");
                     }else{
-                        ?>
-                        <script>
-                            alert("new password and confirm password arn't same !!");
-                        </script>
-                        <?php 
+                        $_SESSION['status'] = "password isn't updated some error occured please try again !!";
+                        $_SESSION['status_code'] = "error";
                     }
                 }else{
-                    ?>
-                    <script>
-                        alert("new password and confirm password arn't same !!");
-                    </script>
-                    <?php 
+                    $_SESSION['status'] = "new password and confirm password arn't same !!";
+                    $_SESSION['status_code'] = "warning";
                     }
                 
             }else{
-                ?>
-                <script>
-                    alert("Wrong old Password entered");
-                </script>
-                <?php
+                $_SESSION['status'] = "Wrong current Password entered";
+                $_SESSION['status_code'] = "error";
             }
         }
         
@@ -81,8 +68,10 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
-
 	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
+
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -167,6 +156,28 @@
 
     <!-- bootstrap js -->
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

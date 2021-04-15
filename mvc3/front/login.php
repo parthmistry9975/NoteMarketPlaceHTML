@@ -5,15 +5,18 @@
       
 ?>
 <?php 
-    
+    $verification = "Enter your email address and password to login";
+    if(isset($_SESSION['verification'])){
+        $verification .= "<br><i class='fa fa-check-circle' aria-hidden='true'></i>&nbsp;".$_SESSION['verification'];
+        unset($_SESSION['verification']);
+    }
     if(isset($_SESSION['message'])){
-        $verification = $_SESSION['message'];
-        ?>
-        <script>
-            alert('<?php echo $verification ; ?>');
-        </script>
-        <?php
         unset($_SESSION['message']);
+    }
+    if(isset($_SESSION['showpassreset']) and $_SESSION['showpassreset'] == 'yes'){
+        $_SESSION['status'] = "password reseted , check your mail !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['showpassreset']);
     }
     
     if(isset($_POST['submit'])){
@@ -64,18 +67,13 @@
                     }
                 }
             }else{
-                ?>
-                <script>
-                    alert("Wrong Password");
-                </script>
-                <?php
+                $_SESSION['status'] = "Wrong Password !";
+                $_SESSION['status_code'] = "error";
             }
         }else{
-            ?>
-            <script>
-                alert("Invalid EmailID");
-            </script>
-            <?php
+            $_SESSION['status'] = "Invalid EmailID , Register your self !";
+            $_SESSION['status_code'] = "warning";
+            
         }
         
     }
@@ -93,7 +91,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
-
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 	
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -126,12 +126,12 @@
         <div class="login-form">
             
             <!-- logo -->
-            <img src="images/login/top-logo.png" alt="Notes MarketPlace">
+            <img onclick="window.location.href='index.php'" src="images/login/top-logo.png" alt="Notes MarketPlace">
             
             <div class="form-center">
                 <div class="login-heading text-center">
                     <h2>Login</h2>    
-                    <p>Enter your email address and password to login</p>
+                    <p><?php echo $verification; ?></p>
                 </div>
                 <form action="login.php" method="post">               
                     <div class="form-group">
@@ -168,6 +168,27 @@
 
     <!-- bootstrap js -->
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

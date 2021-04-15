@@ -7,22 +7,17 @@
 
 
 <?php
-$fetch_notes = "";
 if(isset($_POST['action'])){
     
-    $fetch_notes = "SELECT seller_notes.* ,AVG(Ratings) AS avgratings FROM seller_notes LEFT JOIN seller_notes_reviews ON seller_notes_reviews.NoteID=seller_notes.ID WHERE seller_notes.Status = 9"; 
+    $fetch_notes = "SELECT seller_notes.* ,AVG(Ratings) AS avgratings FROM seller_notes LEFT JOIN seller_notes_reviews ON seller_notes.ID = seller_notes_reviews.NoteID GROUP BY seller_notes.ID HAVING seller_notes.Status = 9"; 
     if(isset($_SESSION['ID'])){
         $fetch_notes .=" AND seller_notes.SellerID != ".$_SESSION['ID'];
     }
-    $fetch_notes .= " GROUP BY seller_notes.ID";
     
     if(isset($_POST['type'])){
         
         $type = $_POST['type'];
-        if( $type == "" ){
-            $fetch_notes .= " HAVING NoteType != '' ";
-        }
-        else{
+        if( $type != "" ){
             $fetch_notes .= " HAVING NoteType IN($type) ";
         }
         
@@ -31,10 +26,7 @@ if(isset($_POST['action'])){
     if(isset($_POST['category'])){
         
         $category = $_POST['category'];
-        if( $category == "" ){
-            $fetch_notes .= " AND Category != '' ";
-        }
-        else{
+        if( $category != "" ){
             $fetch_notes .= " AND Category IN('".$category."')";
         }
        
@@ -43,10 +35,7 @@ if(isset($_POST['action'])){
     if(isset($_POST['university'])){
         
         $university = $_POST['university'];
-        if( $university == "" ){
-            $fetch_notes .= " AND UniversityName != '' ";
-        }
-        else{ 
+        if( $university != "" ){ 
             $fetch_notes .= " AND UniversityName IN('".$university."')";
         }
         
@@ -55,10 +44,7 @@ if(isset($_POST['action'])){
     if(isset($_POST['course'])){
         
         $course = $_POST['course'];
-        if( $course == "" ){
-            $fetch_notes .= " AND Course != '' ";
-        }
-        else{ 
+        if( $course != "" ){ 
             $fetch_notes .= " AND Course IN('".$course."')";
         }
         
@@ -67,34 +53,36 @@ if(isset($_POST['action'])){
     if(isset($_POST['country'])){
         
         $country = $_POST['country'];
-        if( $country == "" ){
-            $fetch_notes .= " AND Country != '' ";
-        }
-        else{ 
+        if( $country != "" ){ 
             $fetch_notes .= " AND Country IN('".$country."')";
         }
     }
     
     if(isset($_POST['search'])){
-        
-        $search_val = $_POST["search"];
-        $fetch_notes .= " AND Title LIKE '%".$_POST["search"]."%'";
-        
+        if($_POST['search'] != ""){
+            $search_val = $_POST["search"];
+            $fetch_notes .= " AND Title LIKE '%".$_POST["search"]."%'";
+        }
     }
     
     if(isset($_POST['rating'])){
         
         $rating = $_POST['rating'];
         if( $rating != "" ){
-            $fetch_notes .= " AND avgratings >= $rating";
+            $fetch_notes .= " AND avgratings > $rating";
         }
     }
+    $fetch_notes .= " ORDER BY seller_notes.PublishedDate DESC";
     
 }   
     if(empty($_POST['page'])){
+        
         $page = 1;
+        
     }else{
+        
         $page = $_POST['page'];
+        
     }
     $_SESSION['currentpage']=$page;
     $num_per_page = 9;
@@ -105,9 +93,6 @@ if(isset($_POST['action'])){
     $final_pagination_fetch_notes = mysqli_query($connection , $for_pagination_fetch_notes);
     $totalrecords = mysqli_num_rows($final_pagination_fetch_notes);
     $totalpages = ceil($totalrecords / $num_per_page);
-    
-    
-    
     
 ?>
 
@@ -123,7 +108,18 @@ if(isset($_POST['action'])){
     <div class="note col-md-4 col-sm-6">
         <div class="border">
             <div class="note-poster">
-                <img class="img-responsive" src="../upload/<?php echo $sellerid; ?>/<?php echo $result['ID']; ?>/<?php echo $result['DisplayPicture']; ?>" alt="poster">
+                   <?php
+                        if($result['DisplayPicture'] != ''){
+                            
+                            $np_file = "../upload/$sellerid/".$result['ID']."/".$result['DisplayPicture'];
+                            
+                        }else{
+                            
+                            $np_file = "images/default/note/dnp.jpg";
+                        }
+                                    
+                   ?>
+                <img class="img-responsive" src="<?php echo $np_file; ?>" alt="poster">
             </div>
             <div class="note-heading">
                 <a href="notedetails.php?noteid=<?php echo $result['ID']; ?>">
@@ -150,10 +146,10 @@ if(isset($_POST['action'])){
                         $numberofreview = $final_getreview['numberofreviews'];
 
                     ?>
-                    <li><i class="fa fa-university" aria-hidden="true"></i> <?php echo $result['UniversityName']; ?>, <?php echo $final_country['Name']; ?></li>
-                    <li><i class="fa fa-columns" aria-hidden="true"></i> <?php echo $result['NumberofPages']; ?> Pages</li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i> <?php if(!empty($result['UniversityName'])){ echo $result['UniversityName']." , ";}else{ echo " ";} ?> <?php if(!empty($final_country['Name'])){ echo $final_country['Name'];}else{ echo " -";} ?></li>
+                    <li><i class="fa fa-columns" aria-hidden="true"></i> <?php if($result['NumberofPages'] != 0){echo $result['NumberofPages']." Pages";}else{ echo "-"; } ?></li>
                     <li><i class="fa fa-calendar" aria-hidden="true"></i> <?php
-                                    $date = $result['CreatedDate'];
+                                    $date = $result['PublishedDate'];
                                     $timestamp = strtotime($date);
                                     $new_date = date("D, M d Y", $timestamp);
                                     echo $new_date;
@@ -184,11 +180,7 @@ if(isset($_POST['action'])){
         }
 ?> 
 </div>
-<?php
 
-if($totalpages != 0) {
-
-?>
 
 <div class="row">
     <ul class="pagination" id="note-pagination">
@@ -225,6 +217,3 @@ if($totalpages != 0) {
         </li>
     </ul>
 </div>
-<?php
-}
-?>

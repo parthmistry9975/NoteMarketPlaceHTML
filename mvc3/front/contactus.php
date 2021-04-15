@@ -41,6 +41,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -76,10 +79,8 @@
             $Mail_Subject = $_POST['mail_subject'];
             $Mail_Body = $_POST['mail_body'];
             
-//            $query = "SELECT * FROM users WHERE RoleID = 2 LIMIT 1";
-//            $fetch_data = mysqli_query($connection ,$query);
-//            $fetch_data_array = mysqli_fetch_assoc($fetch_data);
-//            $Receiver_Email = $fetch_data_array['EmailId'];
+            $_SESSION['status'] = "your response is submitted";
+            $_SESSION['status_code'] = "success";
             require 'src/Exception.php';
             require 'src/PHPMailer.php';
             require 'src/SMTP.php';
@@ -108,14 +109,6 @@
             $mail->Body = "Hello,<br><br>$Mail_Body<br><br>Regards,<br>$Name<br>$Email_ID";
             $mail->AltBody = 'contacte us';
             $mail->send();
-            ?>
-            <script>
-    
-                alert('your response is submitted');
-                window.location.href = "contactus.php";
-            </script>
-            <?php
-            
             } catch (Exception $e) {
             echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
             }
@@ -138,6 +131,16 @@
                     <li class="nav-item">
                         <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
+                    <?php
+                    
+                    if(isset($_SESSION['ID'])){
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                            </li>
+                        <?php
+                    }
+                    ?>
                     <li class="nav-item">
                         <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
@@ -150,7 +153,7 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
                             $pp_file = "images/default/profile/dp.jpg";
@@ -243,15 +246,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -265,6 +292,28 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

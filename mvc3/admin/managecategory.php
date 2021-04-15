@@ -9,6 +9,37 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['categorydel']) and $_SESSION['categorytdel'] == 'yes'){
+        $_SESSION['status'] = "Category Inactivated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['categorydel']);
+    }
+    if(isset($_SESSION['categorydel']) and $_SESSION['categorytdel'] == 'no'){
+        $_SESSION['status'] = "Category isn't Inactivated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['categorydel']);
+    }
+    if(isset($_SESSION['categoryadd']) and $_SESSION['categoryadd'] == 'yes'){
+        $_SESSION['status'] = "Category Added !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['categoryadd']);
+    }
+    if(isset($_SESSION['categoryadd']) and $_SESSION['categoryadd'] == 'no'){
+        $_SESSION['status'] = "Category isn't Added !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['categoryadd']);
+    }
+    if(isset($_SESSION['categoryedit']) and $_SESSION['categoryedit'] == 'yes'){
+        $_SESSION['status'] = "Category Updated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['categoryedit']);
+    }
+    if(isset($_SESSION['categoryedit']) and $_SESSION['categoryedit'] == 'no'){
+        $_SESSION['status'] = "Category isn't Updated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['categoryedit']);
+    }
+
 ?>
 <?php
 
@@ -18,27 +49,11 @@
         $inactive_category_query = "UPDATE note_categories SET IsActive = 0 , ModifiedDate = NOW() , ModifiedBy = ".$_SESSION['ID']." WHERE ID = $inactive_category_id";
         $inactive_category = mysqli_query($connection , $inactive_category_query);
         if($inactive_category){
-            
-            ?>
-            <script>
-                        
-                alert("category inactivated !!");
-                location.replace("managecategory.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['categorydel'] = "yes";
+            header("location:managecategory.php?admin=1");
         }else{
-            
-            ?>
-            <script>
-                        
-                alert("category not inactivated !!");
-                location.replace("managecategory.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['categorydel'] = "no";
+            header("location:managecategory.php?admin=1");
         }
         
     }
@@ -350,6 +365,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>
@@ -376,7 +412,7 @@
     <script>
     
         function inactivecategory(categoryid){
-            var approvecheck = confirm("“Are you sure you want to make this category inactive?");
+            var approvecheck = confirm("Are you sure you want to make this category inactive?");
             if(approvecheck == true){
                 location.replace("managecategory.php?admin=1&inactiveid="+categoryid);
             }else{

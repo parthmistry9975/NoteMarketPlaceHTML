@@ -73,10 +73,11 @@
                 unlink($zipname);
             }
         }else{
+            
+            $_SESSION['download_error'] = "yes"
             ?>
             <script>
-                alert("note file is deleted ");
-                location.replace("userdashboard.php")
+                location.replace("userdashboard.php");
             </script>
             <?php
         }

@@ -275,7 +275,7 @@
                             <td class="dropdown text-left">
                                 <img class="dropdown-toggle" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="images/mydownloads/dots.png" alt="menu">
                                 <div class="dropdown-menu" aria-labelledby="dLabel">
-                                    <a class="dropdown-item" onclick="approvenote('<?php echo $noteid; ?>')" href="">Approve</a>
+                                    <a class="dropdown-item" onclick="return confirm('If you approve the notes – System will publish the notes over portal. Please press yes to continue.')" href="approvenote.php?noteid=<?php echo $noteid; ?>">Approve</a>
                                     <a class="dropdown-item" href="download.php?noteid=<?php echo $noteid; ?>">Download Notes</a>
                                     <a class="dropdown-item" href="adminnotedetail.php?admin=1&noteid=<?php echo $noteid;?>">View More Details</a>
                                 </div>    
@@ -311,6 +311,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>
@@ -358,18 +379,6 @@
 //            loadPublishedNotesByMonth(currentMonth);
 
         });
-    </script>
-    <script>
-    
-        function approvenote(noteid){
-            var approvecheck = confirm("If you approve the notes – System will publish the notes over portal. Please press yes to continue.");
-            if(approvecheck == true){
-                location.replace("approvenote.php?noteid="+noteid);
-            }else{
-                
-            }
-        }
-    
     </script>
 
 </body>

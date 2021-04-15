@@ -9,6 +9,36 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['typetdel']) and $_SESSION['typetdel'] == 'yes'){
+        $_SESSION['status'] = "type Inactivated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['typetdel']);
+    }
+    if(isset($_SESSION['typetdel']) and $_SESSION['typetdel'] == 'no'){
+        $_SESSION['status'] = "type isn't Inactivated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['typetdel']);
+    }
+    if(isset($_SESSION['typeadd']) and $_SESSION['typeadd'] == 'yes'){
+        $_SESSION['status'] = "type Added !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['typeadd']);
+    }
+    if(isset($_SESSION['typeadd']) and $_SESSION['typeadd'] == 'no'){
+        $_SESSION['status'] = "type isn't Added !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['typeadd']);
+    }
+    if(isset($_SESSION['typeedit']) and $_SESSION['typeedit'] == 'yes'){
+        $_SESSION['status'] = "type Updated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['typeedit']);
+    }
+    if(isset($_SESSION['typeedit']) and $_SESSION['typeedit'] == 'no'){
+        $_SESSION['status'] = "type isn't Updated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['typeedit']);
+    }
 ?>
 <?php
 
@@ -18,27 +48,11 @@
         $inactive_type_query = "UPDATE note_types SET IsActive = 0 , ModifiedDate = NOW() , ModifiedBy = ".$_SESSION['ID']." WHERE ID = $inactive_type_id";
         $inactive_type = mysqli_query($connection , $inactive_type_query);
         if($inactive_type){
-            
-            ?>
-            <script>
-                        
-                alert("type inactivated !!");
-                location.replace("managetype.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['typetdel'] = "yes";
+            header("location:managetype.php?admin=1");
         }else{
-            
-            ?>
-            <script>
-                        
-                alert("type not inactivated !!");
-                location.replace("managetype.php?admin=1");
-                        
-            </script>
-            <?php
-            
+            $_SESSION['typetdel'] = "no";
+            header("location:managetype.php?admin=1");
         }
         
     }
@@ -323,7 +337,6 @@
             </div>
 
         </div>
-    </section>
         <!-- footer -->
     <section class="footer footer-admin">
         <div class="container-fluid">
@@ -344,6 +357,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

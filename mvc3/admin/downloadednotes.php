@@ -319,9 +319,9 @@
                                 ?>
                             </td>
                             <td><img src="images/dashboard/eye.png" onclick="window.location.href='memberdetails.php?admin=1&memberid=<?php echo $seller; ?>'" alt="view"></td>
-                            <td><?php if($row['selltype'] == 1){ echo "PAID"; }else{ echo "FREE"; } ?></td>
-                            <td><?php echo $row['noteprice']  ?></td>
-                            <td><?php echo $row['downloadedtime']  ?></td>
+                            <td><?php if( $row['selltype'] == 1 ){ echo "PAID"; }else{ echo "FREE"; } ?></td>
+                            <td><?php echo $row['noteprice'];  ?></td>
+                            <td><?php if(empty($row['downloadedtime'])){ echo "-"; }else{ echo $row['downloadedtime']; }?></td>
                             <td class="dropdown">
                                 <img class="dropdown-toggle" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="images/mydownloads/dots.png" alt="menu">
                                 <div class="dropdown-menu" aria-labelledby="dLabel">

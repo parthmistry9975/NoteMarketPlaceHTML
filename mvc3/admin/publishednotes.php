@@ -251,26 +251,19 @@
                         $mail->Subject = "About your note unpublished on NotesMarketplace";
                         $mail->Body = "Hello ".$seller_firstname." ".$seller_lastname.", <br><br>We want to inform you that, your note $notetitle has been removed from the portal.Please find our remarks as below -<br>$comment<br><br>Regards,<br>Notes Marketplace";
                         $mail->AltBody = 'see your note unpublished on portal';
-
+                        $_SESSION['status'] = "note Unpublished !!";
+                        $_SESSION['status_code'] = "success";
                         $mail->send();
+                        $_SESSION['adminunpublish'] = "yes";
                     } catch (Exception $e) {
                         echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
                     }
                 
-            ?>
-                <script>
-                    alert("note unpublished !!");
-                    window.history.back();
-                </script>
-            <?php
             }
             else{
-            ?>
-                <script>
-                    alert("note not unpublished !! ");
-                    window.history.back();
-                </script>
-            <?php
+                $_SESSION['status'] = "note isn't Unpublished !!";
+                $_SESSION['status_code'] = "error";
+                $_SESSION['adminunpublish'] = "no";
             }
             
             
@@ -444,6 +437,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

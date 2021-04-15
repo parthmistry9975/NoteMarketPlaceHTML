@@ -21,6 +21,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -132,10 +135,10 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
-                            $pp_file = "images/dashboard/eye.png";
+                            $pp_file = "images/default/profile/dp.jpg";
                         }
                         
                         ?>
@@ -187,7 +190,7 @@
                         <?php
                     
                         $loginid = $_SESSION['ID'];
-                        $fetch_progress_query = "SELECT downloads.NoteID,downloads.ID AS download_id,downloads.NoteTitle AS note_title, downloads.NoteCategory AS note_category, users.EmailID AS buyer_id , downloads.IsPaid AS sell_type , downloads.PurchasedPrice AS price , downloads.AttachmentDownloadedDate AS download_date FROM downloads INNER JOIN users ON downloads.Downloader = users.ID WHERE IsEmailVerified = 1 AND IsSellerHasAllowedDownload = 1 AND Seller = $loginid";
+                        $fetch_progress_query = "SELECT downloads.NoteID AS noteid,downloads.ID AS download_id,downloads.NoteTitle AS note_title, downloads.NoteCategory AS note_category, users.EmailID AS buyer_id , downloads.IsPaid AS sell_type , downloads.PurchasedPrice AS price , downloads.AttachmentDownloadedDate AS download_date FROM downloads INNER JOIN users ON downloads.Downloader = users.ID WHERE downloads.Downloader != $loginid AND IsEmailVerified = 1 AND IsSellerHasAllowedDownload = 1 AND Seller = $loginid GROUP BY downloads.NoteID,downloads.Downloader ORDER BY AttachmentDownloadedDate DESC";
                         $progress_notes = mysqli_query($connection,$fetch_progress_query);
                         $i=1;
 
@@ -196,19 +199,19 @@
                         ?>
                             <tr>
                                 <td><?php echo $i; ?></td>
-                                <td><?php echo $progress_row["note_title"]; ?></td>
+                                <td class="purple-color" onclick="window.location.href='notedetails.php?noteid=<?php echo $progress_row["noteid"]; ?>'"><?php echo $progress_row["note_title"]; ?></td>
                                 <td><?php echo $progress_row["note_category"]; ?></td>
                                 <td><?php echo $progress_row["buyer_id"]; ?></td>
                                 <td><?php if($progress_row["sell_type"] == 1){ echo "Paid"; }else{ echo "Free"; } ?></td>
                                 <td><?php echo $progress_row["price"]; ?></td>
                                 <td class="<?php if(empty($progress_row["download_date"])){ echo "text-center";}?>"><?php if(empty($progress_row["download_date"])){ echo "-" ; }else { echo $progress_row["download_date"];} ?></td>
                                 <td>
-                                <?php echo '<a href="notedetails.php?note_id="'.$progress_row["download_id"].'><img src="images/dashboard/eye.png" alt="view"></a>'; ?>
+                                <a href="notedetails.php?noteid=<?php echo $progress_row['noteid']; ?>"><img src="images/dashboard/eye.png" alt="view"></a>
                                 </td>
                                 <td class="dropdown">
                                     <img class="dropdown-toggle" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="images/mydownloads/dots.png" alt="menu">
                                     <div class="dropdown-menu" aria-labelledby="dLabel">
-                                        <a class="dropdown-item" href="#">Download Note</a>
+                                        <a class="dropdown-item" href="download.php?noteid=<?php echo $progress_row["noteid"]; ?>">Download Note</a>
                                     </div>
                                 </td>    
                             </tr>
@@ -226,7 +229,7 @@
     
     <!-- footer -->
     <section class="footer">
-        <div class="container">
+        <div class="container-fluid">
             <hr>
             <div class="row">
                 <div class="col-md-6 footer_content">
@@ -234,15 +237,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -257,6 +284,28 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
     
 
     <!-- custom js -->

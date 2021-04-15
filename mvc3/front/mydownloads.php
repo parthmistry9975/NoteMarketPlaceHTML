@@ -3,6 +3,9 @@
 <?php  
 
     session_start();
+    use PHPMailer\PHPMailer\Exception;
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
     if(!isset($_SESSION['ID'])){
         header("location:login.php");
     }
@@ -21,6 +24,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -132,10 +138,10 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
-                            $pp_file = "images/dashboard/eye.png";
+                            $pp_file = "images/default/profile/dp.jpg";
                         }
                         
                         ?>
@@ -186,49 +192,31 @@
                     <?php
                     
                     $loginid = $_SESSION['ID'];
-                    $fetch_progress_query = "SELECT downloads.NoteID,downloads.ID AS download_id,downloads.NoteTitle AS note_title, downloads.NoteCategory AS note_category, users.EmailID AS buyer_id , downloads.IsPaid AS sell_type , downloads.PurchasedPrice AS price , downloads.AttachmentDownloadedDate AS download_date FROM downloads INNER JOIN users ON downloads.Downloader = users.ID GROUP BY downloads.NoteID,downloads.Downloader HAVING Downloader = $loginid";
+                    $fetch_progress_query = "SELECT downloads.NoteID AS noteid,downloads.Seller AS seller,downloads.ID AS download_id,downloads.NoteTitle AS note_title, downloads.NoteCategory AS note_category, users.EmailID AS buyer_id , downloads.IsPaid AS sell_type , downloads.PurchasedPrice AS price , downloads.AttachmentDownloadedDate AS download_date FROM downloads INNER JOIN users ON downloads.Downloader = users.ID WHERE IsSellerHasAllowedDownload = 1 AND Seller != $loginid AND Downloader = $loginid GROUP BY downloads.NoteID,downloads.Downloader ORDER BY AttachmentDownloadedDate DESC";
                     $progress_notes = mysqli_query($connection,$fetch_progress_query);
                     $i=1;
                    
                     while ($progress_row = mysqli_fetch_array($progress_notes)) { 
                         
-//                                $NoteID = $progress_row['NoteID'];
-//                                $download_notes_query = "SELECT FilePath FROM seller_notes_attachements WHERE NoteID = $NoteID AND IsActive = 1";
-//                                $download_notes = mysqli_query($connection, $download_notes_query);
-//                                $filescount = mysqli_num_rows($download_notes);
-//                                
-//                                $notes_paths = "";
-//                                $x=0;
-//                                while ($download_row = mysqli_fetch_array($download_notes)){
-//                                    
-//                                    echo $download_row['FilePath'];
-//                                    $notes_paths = $notes_paths . $download_row['FilePath'];
-//                                    $x++;
-//                                        if($x < $filescount){
-//                                            $notes_paths .= " ";
-//                                        }
-//                                        
-//                                }
-//                                
                     ?>
                        
                         <tr>
                             <td><?php echo $i; ?></td>
-                            <td><?php echo $progress_row["note_title"]; ?></td>
+                            <td class="purple-color" onclick="window.location.href='notedetails.php?noteid=<?php echo $progress_row["noteid"]; ?>'"><?php echo $progress_row["note_title"]; ?></td>
                             <td><?php echo $progress_row["note_category"]; ?></td>
                             <td><?php echo $progress_row["buyer_id"]; ?></td>
                             <td><?php if($progress_row["sell_type"] == 1){ echo "Paid"; }else{ echo "Free"; } ?></td>
                             <td><?php echo $progress_row["price"]; ?></td>
                             <td class="<?php if(empty($progress_row["download_date"])){ echo "text-center";}?>"><?php if(empty($progress_row["download_date"])){ echo "-" ; }else { echo $progress_row["download_date"];} ?></td>
                             <td>
-                            <?php echo '<a href="notedetails.php?note_id="'.$progress_row["download_id"].'><img src="images/dashboard/eye.png" alt="view"></a>'; ?></td>
+                            <a href="notedetails.php?noteid=<?php echo $progress_row['noteid']; ?>"><img src="images/dashboard/eye.png" alt="view"></a></td>
                             <td class="dropdown">
                                 <img class="dropdown-toggle" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="images/mydownloads/dots.png" alt="menu">
                                 <div class="dropdown-menu" aria-labelledby="dLabel">
                                     
-                                    <a class="dropdown-item" href="download.php?noteid=<?php echo $progress_row["NoteID"]; ?>">Download Note</a>
-                                    <a class="dropdown-item noteidpass" data-id="<?php echo $progress_row["NoteID"]; ?>-<?php echo $loginid; ?>-<?php echo $progress_row["download_id"]; ?>" data-toggle="modal" data-target="#feedback-modal">Add Reviews/Feedback</a>
-                                    <a class="dropdown-item reportidpass" href="#" data-info="<?php echo $progress_row["NoteID"]; ?>-<?php echo $progress_row["note_title"]; ?>-<?php echo $progress_row["download_id"]; ?>" data-toggle="modal" data-target="#reject-modal">Report as inappropriate</a>
+                                    <a class="dropdown-item" href="download.php?noteid=<?php echo $progress_row['noteid'];?>&downloadentry=1">Download Note</a>
+                                    <a class="dropdown-item noteidpass" data-id="<?php echo $progress_row["noteid"]; ?>-<?php echo $loginid; ?>-<?php echo $progress_row["download_id"]; ?>" data-toggle="modal" data-target="#feedback-modal">Add Reviews/Feedback</a>
+                                    <a class="dropdown-item reportidpass" href="#" data-info="<?php echo $progress_row["noteid"]; ?>-<?php echo $progress_row["note_title"]; ?>-<?php echo $progress_row["download_id"]; ?>-<?php echo $progress_row["seller"]; ?>" data-toggle="modal" data-target="#reject-modal">Report as inappropriate</a>
                                 </div>
                             </td>    
                         </tr>
@@ -261,18 +249,13 @@
             $insert_review = mysqli_query($connection,$insert_review_query);
             
             if($insert_review){
-            ?>
-                <script>
-                    alert("review added !!");
-                </script>
-            <?php
+                $_SESSION['status'] = "review added !!";
+                $_SESSION['status_code'] = "success";
+                
             }
             else{
-            ?>
-                <script>
-                    alert("review isn't added !! ");
-                </script>
-            <?php
+                $_SESSION['status'] = "review isn't added !!";
+                $_SESSION['status_code'] = "error";
             }
             
             
@@ -311,7 +294,7 @@
                             </div>
                             <div class="comment-box">
                                 <label for="exampleInputfname">Comments &#42;</label>
-                                <textarea class="form-control" name="comment" id="exampleInputfname" placeholder="Comments..." rows="5"></textarea>
+                                <textarea class="form-control" name="comment" id="exampleInputfname" placeholder="Comments..." rows="5" required></textarea>
                             </div>
                             <div class="submit-button">
                                 <button type="submit" id="reviewpost" name="reviewpost" class="btn btn-primary submit-btn">Submit</button>
@@ -331,25 +314,63 @@
             $reportpost = $_POST['reportpost'];
             $reportpostArray = explode("-",$reportpost);
             $noteid = $reportpostArray[0];
+            $note_title = $reportpostArray[1];
             $downloadid = $reportpostArray[2];
+            $sellerid = $reportpostArray[3];
             $loginid = $_SESSION['ID'];
+            $member_name = $_SESSION['FNAME']." ".$_SESSION['LNAME'];
+            
+            $get_seller = mysqli_query($connection,"SELECT FirstName,LastName FROM users WHERE ID = $sellerid");
+            $seller_name = mysqli_fetch_assoc($get_seller);
+            $seller = $seller_name['FirstName']." ".$seller_name['LastName'];
             
             $insert_report_query = "INSERT INTO seller_notes_reported_issues( NoteID , ReportedBYID , AgainstDownloadID , Remarks, CreatedBy) VALUES ($noteid,$loginid,$downloadid,'$remark',$loginid)";
             $insert_report = mysqli_query($connection,$insert_report_query);
             
             if($insert_report){
-            ?>
-                <script>
-                    alert("report submitted !!");
-                </script>
-            <?php
+                $_SESSION['status'] = "report submitted !!";
+                $_SESSION['status_code'] = "success";
+                
+                
+                    require 'src/Exception.php';
+                    require 'src/PHPMailer.php';
+                    require 'src/SMTP.php';
+
+                    $mail = new PHPMailer(true);
+
+                    try {
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com';
+                        $mail->SMTPAuth = true;
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mail->Port = 587;
+
+                        $config_email = '170320116025.it.parth@gmail.com';
+                        $mail->Username = $config_email;
+                        $mail->Password = 'Parth@1234';
+
+                        // Sender and recipient settings
+                        $mail->setFrom($config_email, 'Parth Mistry');
+
+                        $mail->addAddress('parthmistry7227843533@gmail.com','note market place');
+                        $mail->addReplyTo($config_email, 'Parth Mistry');
+
+                        $mail->IsHTML(true);
+                        $mail->Subject = "$member_name Reported an issue for $note_title";
+                        $mail->Body = "Hello Admins,<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We want to inform you that, $member_name Reported an issue for $seller’s Note with title $note_title. Please look at the notes and take required actions.<br><br>Regards,<br>Notes Marketplace";
+                        $mail->AltBody = ' ';
+
+                        $mail->send();
+                        
+                    } catch (Exception $e) {
+                        echo "Error in sending email. Mailer Error: {$mail->ErrorInfo}";
+                    }
+                
+                
             }
             else{
-            ?>
-                <script>
-                    alert("report isn't submitted !! ");
-                </script>
-            <?php
+                $_SESSION['status'] = "report isn't submitted !!";
+                $_SESSION['status_code'] = "error";
             }
             
             
@@ -400,7 +421,7 @@
     
     <!-- footer -->
     <section class="footer">
-        <div class="container">
+        <div class="container-fluid">
             <hr>
             <div class="row">
                 <div class="col-md-6 footer_content">
@@ -408,15 +429,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -431,6 +476,28 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
     
 
     <!-- custom js -->

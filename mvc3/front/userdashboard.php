@@ -9,6 +9,16 @@
     if($_SESSION['ROLE'] != 3){
         header("location:../admin/admindashboard.php?admin=1");
     }
+    if(isset($_SESSION['showsetpassword']) and $_SESSION['showsetpassword'] == 'yes'){
+        $_SESSION['status'] = "Password Updated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['showsetpassword']);
+    }
+    if(isset($_SESSION['download_error']) and $_SESSION['download_error'] == 'yes'){
+        $_SESSION['status'] = "note file is deleted";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['download_error']);
+    }
     
 ?>
 <?php
@@ -39,6 +49,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -149,10 +162,10 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
-                            $pp_file = "images/dashboard/eye.png";
+                            $pp_file = "images/default/profile/dp.jpg";
                         }
                         
                         ?>
@@ -163,7 +176,7 @@
                                 <a class="dropdown-item" href="mysoldnotes.php">My Sold Notes</a>
                                 <a class="dropdown-item" href="myrejectednotes.php">My Rejected Notes</a>
                                 <a class="dropdown-item" href="changepw.php">Change Password</a>
-                                <a class="dropdown-item purple" href="logout.php">LOGOUT</a>
+                                <a class="dropdown-item purple" style="color:#6255a5;" href="logout.php">LOGOUT</a>
                             </div>
                         </a>
                     </li>
@@ -199,13 +212,30 @@
                             </div>
                             <div class="col-md-4 text-center stats-text">
                                 <div>
-                                    <h4>100</h4>
+                                    <h4 onclick="window.location.href='mysoldnotes.php'">
+                                        <?php
+                                            $loginid = $_SESSION['ID'];
+                                            $sold_notes_count = mysqli_query($connection,"SELECT * FROM downloads WHERE Seller = $loginid AND IsSellerHasAllowedDownload = 1 GROUP BY downloads.NoteID , downloads.Downloader");
+                                            $sold_count = mysqli_num_rows($sold_notes_count);
+                                            echo $sold_count;
+                                        ?>
+                                    </h4>
                                     <h6>Number of Notes Sold</h6>
                                 </div>
                             </div>
                             <div class="col-md-4 text-center stats-text">
                                 <div>
-                                    <h4>$10,00,000</h4>
+                                    <h4 onclick="window.location.href='mysoldnotes.php'">
+                                        <?php
+                                            $earn_query = mysqli_query($connection,"SELECT SUM(PurchasedPrice) AS earned FROM downloads WHERE Seller = $loginid AND IsSellerHasAllowedDownload=1 GROUP BY downloads.NoteID , downloads.Downloader");
+                                            $earned = mysqli_fetch_assoc($earn_query);
+                                            if(empty($earned['earned'])){
+                                                echo "₹  0";
+                                            }else{
+                                                echo "₹ ".$earned['earned'];   
+                                            }
+                                        ?>
+                                    </h4>
                                     <h6>Money Earned</h6>
                                 </div>
                             </div>
@@ -216,7 +246,13 @@
                 <div class="col-lg-2 col-md-4 text-center">
                     <div class="stat-item stats-text">
                         <div>
-                            <h4>38</h4>
+                            <h4 onclick="window.location.href='mydownloads.php'">
+                                <?php
+                                    $download_query = mysqli_query($connection , "SELECT * from downloads WHERE Downloader=$loginid AND IsSellerHasAllowedDownload = 1 GROUP BY downloads.NoteID,downloads.Downloader");
+                                    $download_count = mysqli_num_rows($download_query);
+                                    echo $download_count;
+                                ?>
+                            </h4>
                             <h6>My Downloads</h6>
                         </div>
                     </div>
@@ -225,7 +261,13 @@
                 <div class="col-lg-2 col-md-4 text-center">
                     <div class="stat-item stats-text">
                         <div>
-                            <h4>12</h4>
+                            <h4 onclick="window.location.href='myrejectednotes.php'">
+                                <?php
+                                    $reject_query = mysqli_query($connection,"SELECT COUNT(ID) AS rejected FROM seller_notes WHERE SellerID = $loginid AND Status = 10");
+                                    $reject = mysqli_fetch_assoc($reject_query);
+                                    echo $reject['rejected'];
+                                ?>
+                            </h4>
                             <h6>My Rejected Notes</h6>
                         </div>
                     </div>
@@ -234,7 +276,13 @@
                 <div class="col-lg-2 col-md-4 text-center">
                     <div class="stat-item stats-text">
                         <div>
-                            <h4>102</h4>
+                            <h4 onclick="window.location.href='buyerrequest.php'">
+                                <?php
+                                    $buy_request = mysqli_query($connection,"SELECT * FROM downloads WHERE Seller = $loginid AND IsSellerHasAllowedDownload = 0 GROUP BY downloads.NoteID,downloads.Downloader");
+                                    $bcount = mysqli_num_rows($buy_request);
+                                    echo $bcount;
+                                ?>
+                            </h4>
                             <h6>Buyer Requests</h6>
                         </div>
                     </div>
@@ -244,10 +292,6 @@
     </div>
     <!-- Stats Ends-->
    
-   
-    
-    
-    
     
     <section class="data-table dashboard-table">
         <div class="container table1">
@@ -274,19 +318,19 @@
                     <?php  
                     
                     $loginid = $_SESSION['ID'];
-                    $fetch_progress_query = "SELECT seller_notes.ID,seller_notes.Status AS s_id,seller_notes.CreatedDate AS added_date,seller_notes.Title AS title,note_categories.Name AS category,reference_data.Value AS status FROM seller_notes,reference_data,note_categories WHERE seller_notes.SellerID = $loginid AND seller_notes.Status = reference_data.ID AND seller_notes.Category = note_categories.ID AND seller_notes.Status IN ( 6, 7) ORDER BY seller_notes.CreatedDate DESC";
+                    $fetch_progress_query = "SELECT seller_notes.ID,seller_notes.Status AS s_id,seller_notes.CreatedDate AS added_date,seller_notes.Title AS title,note_categories.Name AS category,reference_data.Value AS status FROM seller_notes,reference_data,note_categories WHERE seller_notes.SellerID = $loginid AND seller_notes.Status = reference_data.ID AND seller_notes.Category = note_categories.ID AND seller_notes.Status IN ( 6, 7 ,8) ORDER BY seller_notes.CreatedDate DESC";
                     $progress_notes = mysqli_query($connection,$fetch_progress_query);
                   
                     while ($progress_row = mysqli_fetch_array($progress_notes)) {  
                     ?>
-                        <tr>
-                            <td><?php echo $progress_row["added_date"]; ?></td>
+                        <tr><?php $addeddatestr = strtotime($progress_row["added_date"]); ?>
+                            <td data-sort='<?php echo $addeddatestr; ?>'><?php echo $progress_row["added_date"]; ?></td>
                             <td><?php echo $progress_row["title"]; ?></td>
                             <td><?php echo $progress_row["category"]; ?></td>
                             <td><?php echo $progress_row["status"]; ?></td>
                             <td><?php 
                         
-                                if( $progress_row["s_id"] == 6 ){ echo '&nbsp;<a href="editnote.php?id_note='.$progress_row["ID"].'"><img src="images/dashboard/edit.png" alt="edit"></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="deletenote.php?delete_id='.$progress_row["ID"].'"><img src="images/dashboard/delete.png" alt="delete"></a>'; }
+                                if( $progress_row["s_id"] == 6 ){ echo '&nbsp;<a href="editnote.php?noteid='.$progress_row["ID"].'"><img src="images/dashboard/edit.png" alt="edit"></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="deletenote.php?delete_id='.$progress_row["ID"].'"><img src="images/dashboard/delete.png" alt="delete"></a>'; }
                                 else{
 
                                 echo '&nbsp;&nbsp;&nbsp;&nbsp;<a href="notedetails.php?noteid='.$progress_row["ID"].'"><img src="images/dashboard/eye.png" alt="view"></a>';
@@ -353,11 +397,11 @@
                 </table>
             </div>
         </div>
+        
     </section>
-    
     <!-- footer -->
-    <section class="footer">
-        <div class="container">
+    <section class="footer container-fluid">
+           <div class="container-fluid">
             <hr>
             <div class="row">
                 <div class="col-md-6 footer_content">
@@ -365,21 +409,46 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
-        </div>
+            </div>
     </section>
 	<!-- footer ends -->
+    
 	
 	<!-- jquery-->
     <script src="js/jquery.min.js"></script>
@@ -388,6 +457,28 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) and $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

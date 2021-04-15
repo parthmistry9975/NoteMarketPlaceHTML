@@ -27,6 +27,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -83,10 +86,10 @@
                         $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
-                        if(isset($image_path['ProfilePicture'])){
+                        if(!empty($image_path['ProfilePicture'])){
                             $pp_file = $image_path['ProfilePicture'];
                         }else{
-                            $pp_file = "images/dashboard/eye.png";
+                            $pp_file = "images/default/profile/dp.jpg";
                         }
                         
                         ?>
@@ -127,13 +130,15 @@
 	
 	<?php  
                     
-                    if(isset($_GET['id_note'])){
+                    if(isset($_GET['noteid'])){
                         
-                        $noteid = $_GET['id_note'];
+                        $noteid = $_GET['noteid'];
                         $fetch_note_details_query = "SELECT * FROM seller_notes WHERE ID = $noteid";
                         $fetch_note_details = mysqli_query($connection , $fetch_note_details_query);
                         $notedetails = mysqli_fetch_assoc($fetch_note_details);
                     
+                    }else{
+                        header("location:userdashboard.php");
                     }
                     if(isset($_POST['update'])){
                         
@@ -142,12 +147,18 @@
                         $category= mysqli_real_escape_string($connection,$_POST['notecategory'] );
 
                         $type= mysqli_real_escape_string($connection,$_POST['notetype'] );
+                        if(!$type){
+                            $type = 6;
+                        }
 
                         $pages= mysqli_real_escape_string($connection,$_POST['numberofpages'] );
 
                         $description= mysqli_real_escape_string($connection,$_POST['description'] );
 
                         $country= mysqli_real_escape_string($connection,$_POST['country'] );
+                        if(!$country){
+                            $country = 6;
+                        }
 
                         $institution= mysqli_real_escape_string($connection,$_POST['institutename'] );
 
@@ -164,26 +175,20 @@
                             $price = 0;
                         }
                         
-                        $update = "UPDATE seller_notes SET Title = '$title' , Category = $category , NoteType = $type , NumberofPages = $pages , Description = '$description' , Country = $country , UniversityName = '$institution' , Course ='$course' , CourseCode = $coursecode , Professor = '$professor' , IsPaid = $sellfor , SellingPrice = $price , ModifiedBy =".$_SESSION['ID']." , ModifiedDate = NOW() WHERE ID = ".$_POST['update'];
+                        $update = "UPDATE seller_notes SET Title = '$title' , Category = $category , NoteType = $type , NumberofPages = $pages , Description = '$description' , Country = $country , UniversityName = '$institution' , Course ='$course' , CourseCode = '$coursecode' , Professor = '$professor' , IsPaid = $sellfor , SellingPrice = $price , ModifiedBy =".$_SESSION['ID']." , ModifiedDate = NOW() WHERE ID = ".$_POST['update'];
                         $updatequery = mysqli_query($connection,$update);
                         
                         if($updatequery){
-                            ?>
-                            <script>
-                                alert("note details updated");
-                            </script>
-                            <?php
+                            $_SESSION['status'] = "note details updated !!";
+                            $_SESSION['status_code'] = "success";
                             $noteid = $_POST['update'];
                             $fetch_note_details_query = "SELECT * FROM seller_notes WHERE ID = $noteid";
                             $fetch_note_details = mysqli_query($connection , $fetch_note_details_query);
                             $notedetails = mysqli_fetch_assoc($fetch_note_details);
                         }
                         else{
-                            ?>
-                            <script>
-                                alert("note details not updated");
-                            </script>
-                            <?php
+                            $_SESSION['status'] = "note details not updated !!";
+                            $_SESSION['status_code'] = "error";
                             $noteid = $_POST['update'];
                             $fetch_note_details_query = "SELECT * FROM seller_notes WHERE ID = $noteid";
                             $fetch_note_details = mysqli_query($connection , $fetch_note_details_query);
@@ -260,7 +265,8 @@
                                     </tbody>
                                 </table>";   //Email body
                                 $mail->AltBody = ' ';   //Alternate body of email
-
+                                $_SESSION['status'] = "note is gone to admin for publish !!";
+                                $_SESSION['status_code'] = "success";
                                 $mail->send();
                                 header("location:userdashboard.php");
 
@@ -269,6 +275,8 @@
                             }
                             
                         }else{
+                            $_SESSION['status'] = "note isn't published some errors!!";
+                            $_SESSION['status_code'] = "error";
                             ?>
                             <script>   
                                 alert("not isn't published");
@@ -286,7 +294,7 @@
 	<!-- profile form -->
 	<div class="container">
             <div class="row">
-                <form class="profile-form col-md-12" action="editnote.php" method="post" enctype="multipart/form-data">
+                <form class="profile-form col-md-12" action="editnote.php?noteid=<?php if(isset($_GET['noteid'])){ echo $_GET['noteid']; } ?>" method="post" enctype="multipart/form-data">
                     <div class="col-md-12 profile-form-heading">
                         <h2>Basic Note Details</h2>
                     </div>
@@ -342,13 +350,13 @@
                                 $typerows = mysqli_num_rows($tquery);
                             
                             ?>
-                            <select id="notetype" name="notetype" class="form-control" required>
+                            <select id="notetype" name="notetype" class="form-control">
                                 <option value="">Select your note type</option>
                                 <?php
                                     for($i=1;$i<=$typerows;$i++){
                                         $typerow = mysqli_fetch_array($tquery);
                                 ?>
-                                    <option value="<?php echo $typerow['ID'] ?>" <?php if($typerow['ID']==$notedetails['Category']){echo "selected";}?>><?php echo $typerow['Name'] ?></option>
+                                    <option value="<?php echo $typerow['ID'] ?>" <?php if( $typerow['ID'] == $notedetails['NoteType'] ){   echo "selected"; }?>><?php echo $typerow['Name'] ?></option>
                                 <?php
                             }
                             ?>
@@ -356,7 +364,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="pages">Number of Pages</label>
-                            <input type="text" name="numberofpages" title="only numbers are allowed" class="form-control" id="pages" placeholder="Enter number of note pages" required value="<?php echo $notedetails['NumberofPages']; ?>">
+                            <input type="text" name="numberofpages" title="only numbers are allowed" class="form-control" id="pages" placeholder="Enter number of note pages" value="<?php echo $notedetails['NumberofPages']; ?>">
                         </div>
                     </div>
                     <div class="form-row">
@@ -379,7 +387,7 @@
                                 $countryrows = mysqli_num_rows($coquery);
                             
                             ?>
-                            <select id="country" name="country" class="form-control" required>
+                            <select id="country" name="country" class="form-control">
                                 <option value="">Select your country</option>
                                 <?php
                                     for($i=1;$i<=$countryrows;$i++){
@@ -393,7 +401,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label for="institute">Instituion Name</label>
-                            <input type="text" title="numbers are not allowed must have 3 characters" name="institutename" class="form-control" id="institute" placeholder="Enter your institution name" required value="<?php echo $notedetails['UniversityName']; ?>">
+                            <input type="text" title="numbers are not allowed must have 3 characters" name="institutename" class="form-control" id="institute" placeholder="Enter your institution name" value="<?php echo $notedetails['UniversityName']; ?>">
                         </div>
                     </div>
                     
@@ -403,17 +411,17 @@
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="coursename">Course Name</label>
-                            <input type="text" title="must have 2 characters" name="coursename" class="form-control" id="coursename" placeholder="Enter your course name" required value="<?php echo $notedetails['Course']; ?>">
+                            <input type="text" title="must have 2 characters" name="coursename" class="form-control" id="coursename" placeholder="Enter your course name" value="<?php echo $notedetails['Course']; ?>">
                         </div>
                         <div class="form-group col-md-6">
                             <label for="coursecode">Course Code</label>
-                            <input type="text" title="maximum 20 characters" name="coursecode" class="form-control" id="coursecode" placeholder="Enter your course code" required value="<?php echo $notedetails['CourseCode']; ?>">
+                            <input type="text" title="maximum 20 characters" name="coursecode" class="form-control" id="coursecode" placeholder="Enter your course code" value="<?php echo $notedetails['CourseCode']; ?>">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
                             <label for="professor">Professor / Lecturer</label>
-                            <input type="text" title="numbers are not allowed must have 3 characters" name="author" class="form-control" id="professor" placeholder="Enter your professor name" required value="<?php echo $notedetails['Professor']; ?>">
+                            <input type="text" title="numbers are not allowed must have 3 characters" name="author" class="form-control" id="professor" placeholder="Enter your professor name" value="<?php echo $notedetails['Professor']; ?>">
                         </div>
                         <div class="form-group col-md-6">
                             
@@ -467,15 +475,39 @@
                 </div>
                 <div class="col-md-6 footer_social text-right">
                     <ul class="social-list">
-                        <li><a href="#">
+                        <li>
+                            <?php
+                                
+                                $fetch_furl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 6");
+                                $furl = mysqli_fetch_assoc($fetch_furl);
+                            
+                            ?>
+                            <a href="<?php echo $furl['Value']; ?>">
                                 <i class="fa fa-facebook"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                            
+                                $fetch_turl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 7");
+                                $turl = mysqli_fetch_assoc($fetch_turl);
+                            
+                            ?>
+                            <a href="<?php echo $turl['Value']; ?>">
                                 <i class="fa fa-twitter"></i>
-                            </a></li>
-                        <li><a href="#">
+                            </a>
+                        </li>
+                        <li>
+                            <?php
+                           
+                                $fetch_lurl = mysqli_query($connection,"SELECT Value FROM system_configurations WHERE ID = 8");
+                                $lurl = mysqli_fetch_assoc($fetch_lurl);     
+                           
+                            ?>
+                            <a href="<?php echo $lurl['Value']; ?>">
                                 <i class="fa fa-google-plus"></i>
-                            </a></li>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -489,6 +521,28 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

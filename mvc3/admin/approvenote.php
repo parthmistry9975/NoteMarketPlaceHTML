@@ -15,23 +15,11 @@
         $approve_note_query = "UPDATE seller_notes SET status = 9 , ActionedBy = $loginid , PublishedDate = NOW() , ModifiedDate = NOW() , ModifiedBy = $loginid WHERE ID = $noteid";
         $approve_note = mysqli_query($connection , $approve_note_query);
         if($approve_note){
-            ?>
-            <script>
-                
-                alert('note published');
-                window.history.back();
-                
-            </script>
-            <?php
+            $_SESSION['approve-note'] = "yes";
+            header("location:admindashboard.php?admin=1");
         }else{
-             ?>
-            <script>
-                
-                alert('note is not unpublished');
-                window.history.back();
-                
-            </script>
-            <?php
+            $_SESSION['approve-note'] = "no";
+            header("location:admindashboard.php?admin=1");
         }
         
     }

@@ -9,6 +9,16 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['toinreview-note']) and $_SESSION['toinreview-note'] == 'yes'){
+        $_SESSION['status'] = "note is added to inreview !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['toinreview-note']);
+    }
+    if(isset($_SESSION['toinreview-note']) and $_SESSION['toinreview-note'] == 'no'){
+        $_SESSION['status'] = "note is not added to inreview !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['toinreview-note']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -224,18 +234,12 @@
             $update_to_reject = mysqli_query($connection,$update_to_reject_query);
             
             if($update_to_reject){
-            ?>
-                <script>
-                    alert("note is added to rejected notes !!");
-                </script>
-            <?php
+                $_SESSION['status'] = "note is added to rejected notes !!";
+                $_SESSION['status_code'] = "success";
             }
             else{
-            ?>
-                <script>
-                    alert("note isn't added to rejected notes !! ");
-                </script>
-            <?php
+                $_SESSION['status'] = "note isn't added to rejected notes !!";
+                $_SESSION['status_code'] = "error";
             }
             
             
@@ -353,7 +357,7 @@
                             <td class="dropdown">
                                 <img class="dropdown-toggle" id="dLabel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="images/mydownloads/dots.png" alt="menu">
                                 <div class="dropdown-menu" aria-labelledby="dLabel">
-                                    <a class="dropdown-item" href="download.php?noteid=<?php echo $row['noteid']; ?>&downloadentry=1">Download Notes</a>
+                                    <a class="dropdown-item" href="download.php?noteid=<?php echo $row['noteid']; ?>">Download Notes</a>
                                     <a class="dropdown-item" href="adminnotedetail.php?admin=1&noteid=<?php echo $noteid;?>">View More Details</a>
                                 </div>    
                             </td>
@@ -389,6 +393,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

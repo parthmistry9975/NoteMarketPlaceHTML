@@ -63,21 +63,14 @@
                             $profilepic_dest = "../upload/admin/$loginid/".$profilepicnewname;
                             move_uploaded_file($profilepicpath,$profilepic_dest);
                         }
-                    
-                    ?>
-                        <script>
-                            alert("profile is updated");
-                            location.replace("admindashboard.php?admin=1");
-                        </script>
-                    <?php
+                        $_SESSION['status'] = "Profile updated !!";
+                        $_SESSION['status_code'] = "success";
+                        header("location:adminprofile.php?admin=1");
                     }
                     else{
-                    ?>
-                        <script>
-                            alert("profile isn't updated !! ");
-                            location.replace("adminprofile.php?admin=1");
-                        </script>
-                    <?php
+                        $_SESSION['status'] = "profile isn't updated !!";
+                        $_SESSION['status_code'] = "error";
+                        header("location:adminprofile.php?admin=1");
                     }
                     
                 
@@ -85,11 +78,8 @@
                 
                 
             }else{
-                ?>
-                    <script>
-                        alert("please choose proper file type !! for profile picture jpg , jpeg , png !! ");
-                    </script>
-                <?php
+                $_SESSION['status'] = "please choose proper file type !! e.g, jpg , jpeg , png !!";
+                $_SESSION['status_code'] = "warning";
             }
         }
 
@@ -351,6 +341,27 @@
     <!-- bootstrap js -->
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

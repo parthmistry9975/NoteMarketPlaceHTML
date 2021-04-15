@@ -115,7 +115,7 @@
         .left-table{
             width: 120% !important;
         }
-        #maintable{
+        table#maintable{
             width: 101% !important;
             margin-left: 7px;
         }
@@ -176,15 +176,15 @@
                                     $role = mysqli_fetch_assoc($fetch_role);
                                     $check_role = $role['RoleID'];
                                     if($check_role == 1){
-                                        echo '<a class="dropdown-item" href="managesystemconfiguration.php?admin=1">Manage System Configuration</a>
+                                        ?><a class="dropdown-item" href="managesystemconfiguration.php?admin=1">Manage System Configuration</a>
                                 <a class="dropdown-item" href="manageadministrator.php?admin=1">Manage Administrator</a>
                                 <a class="dropdown-item" href="managecategory.php?admin=1">Manage Category</a>
                                 <a class="dropdown-item" href="managetype.php?admin=1">Manage Type</a>
                                 <a class="dropdown-item" href="managecountry.php?admin=1">Manage Countries</a>';
-                                    }else{
-                                        echo '<a class="dropdown-item" href="managecategory.php?admin=1">Manage Category</a>
+                                    <?php}else{
+                                        ?><a class="dropdown-item" href="managecategory.php?admin=1">Manage Category</a>
                                 <a class="dropdown-item" href="managetype.php?admin=1">Manage Type</a>
-                                <a class="dropdown-item" href="managecountry.php?admin=1">Manage Countries</a>';
+                                <a class="dropdown-item" href="managecountry.php?admin=1">Manage Countries</a><?php
                                     }
                                 ?>
                                 
@@ -198,7 +198,7 @@
                             $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                             $fetch_image_num = mysqli_num_rows($fetch_image_path);
                             if($fetch_image_num == 0 ){
-                                $pp_file="images/note-details/close.png";
+                                $pp_file="../front/images/default/profile/dp.jpg";
                             }else{
                                 $image_path = mysqli_fetch_assoc($fetch_image_path);
                                 $pp_file = "../upload/admin/".$_SESSION['ID']."/".$image_path['ProfilePicture'];
@@ -232,7 +232,11 @@
                 <div class="col-md-2 col-sm-12 member-info text-center">
                     <div class="member-image">
                         <?php
-                            $profilepicpath = "../upload/".$memberid."/profile/".$information['ProfilePicture'];
+                            if(isset($information['ProfilePicture'])){
+                                $profilepicpath = $information['ProfilePicture'];
+                            }else{
+                                $profilepicpath = "../front/images/default/profile/dp.jpg";
+                            }
                         ?>
                         <img src="<?php echo $profilepicpath; ?>" alt="member">
                     </div>
@@ -253,15 +257,15 @@
                         </tr>
                         <tr>
                             <td>DOB:</td>
-                            <td class="purple-member-details"><?php echo  $information['DOB']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['DOB'])){ echo  $information['DOB']; }else{ echo "-"; } ?></td>
                         </tr>
                         <tr>
                             <td>Phone Number:</td>
-                            <td class="purple-member-details"><?php echo $information['CountryCode'].$information['PhoneNumber']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['PhoneNumber'])){ echo $information['CountryCode'].$information['PhoneNumber']; }else{ echo "-";} ?></td>
                         </tr>
                         <tr>
                             <td>College/University:</td>
-                            <td class="purple-member-details"><?php echo $information['University']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['University'])){ echo $information['University'];}else{ echo "-";}  ?></td>
                         </tr>
                     </table>
                 </div>
@@ -269,27 +273,27 @@
                     <table class="table table-responsive right-table table-borderless">
                         <tr>
                             <td>Address 1:</td>
-                            <td class="purple-member-details"><?php echo $information['AddressLine1']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['AddressLine1'])){ echo $information['AddressLine1'];}else{ echo "-"; } ?></td>
                         </tr>
                         <tr>
                             <td>Address 2:</td>
-                            <td class="purple-member-details"><?php echo $information['AddressLine2']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['AddressLine2'])){ echo $information['AddressLine2']; }else{ echo "-"; } ?></td>
                         </tr>
                         <tr>
                             <td>City:</td>
-                            <td class="purple-member-details"><?php echo $information['City']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['City'])){ echo $information['City']; }else{ echo "-";} ?></td>
                         </tr>
                         <tr>
                             <td>State:</td>
-                            <td class="purple-member-details"><?php echo $information['State']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['State'])){ echo $information['State']; }else{ echo "-";} ?></td>
                         </tr>
                         <tr>
                             <td>Country:</td>
-                            <td class="purple-member-details"><?php echo $information['Country']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['Country'])){ echo $information['Country']; }else{ echo "-";} ?></td>
                         </tr>
                         <tr>
                             <td>Zipcode:</td>
-                            <td class="purple-member-details"><?php echo $information['ZipCode']; ?></td>
+                            <td class="purple-member-details"><?php if(isset($information['ZipCode'])){ echo $information['ZipCode']; }else{ echo "-";} ?></td>
                         </tr>
                     </table>
                 </div>

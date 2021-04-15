@@ -148,23 +148,11 @@
                 $add_country_query = "INSERT INTO countries( Name , CountryCode , CreatedBy ) VALUES ( '$countryname' , '$countrycode' , $loginid)";
                 $add_country = mysqli_query($connection , $add_country_query);
                 if($add_country){
-                    ?>
-                    <script>
-                        
-                        alert("country added !!");
-                        location.replace("managecountry.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['countryadd'] = "yes";
+                    header("location:managecountry.php?admin=1");
                 }else{
-                    ?>
-                    <script>
-                        
-                        alert("country not added !!");
-                        location.replace("managecountry.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['countryadd'] = "no";
+                    header("location:managecountry.php?admin=1");
                 }
             }
             
@@ -177,23 +165,11 @@
                 $edit_country_query = "UPDATE countries SET Name = '$countryname' , CountryCode = '$countrycode', ModifiedDate = NOW() , ModifiedBy = $loginid WHERE ID = $edit_countryid";
                 $edit_country = mysqli_query($connection , $edit_country_query);
                 if($edit_country){
-                    ?>
-                    <script>
-                        
-                        alert("country updated !!");
-                        location.replace("managecountry.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['countryedit'] = "yes";
+                    header("location:managecountry.php?admin=1");
                 }else{
-                    ?>
-                    <script>
-                        
-                        alert("country not updated !!");
-                        location.replace("managecountry.php?admin=1");
-                        
-                    </script>
-                    <?php
+                    $_SESSION['countryedit'] = "no";
+                    header("location:managecountry.php?admin=1");
                 }
             }
                 

@@ -9,6 +9,16 @@
     if(!isset($_SESSION['ID'])){
         header("location:../front/login.php");
     }
+    if(isset($_SESSION['deactivatemember']) and $_SESSION['deactivatemember'] == 'yes'){
+        $_SESSION['status'] = "member deactivated !!";
+        $_SESSION['status_code'] = "success";
+        unset($_SESSION['deactivatemember']);
+    }
+    if(isset($_SESSION['deactivatemember']) and $_SESSION['deactivatemember'] == 'no'){
+        $_SESSION['status'] = "member isn't deactivated !!";
+        $_SESSION['status_code'] = "error";
+        unset($_SESSION['deactivatemember']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -348,6 +358,27 @@
     <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <script>
+    <?php
+        if(isset($_SESSION['status']) && $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+    </script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

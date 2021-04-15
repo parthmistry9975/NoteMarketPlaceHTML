@@ -18,23 +18,11 @@
         $toinreview_note_query = "UPDATE seller_notes SET status = 8 , ActionedBy = $loginid , ModifiedDate = NOW() , ModifiedBy = $loginid WHERE ID = $noteid";
         $toinreview_note = mysqli_query($connection , $toinreview_note_query);
         if($toinreview_note){
-            ?>
-            <script>
-                
-                alert('note is added to inreview !!');
-                window.history.back();
-                
-            </script>
-            <?php
+            $_SESSION['toinreview-note'] = "yes";
+            header("location:underreview.php?admin=1");
         }else{
-             ?>
-            <script>
-                
-                alert('note is not added to inreview !!');
-                window.history.back();
-                
-            </script>
-            <?php
+            $_SESSION['toinreview-note'] = "no";
+            header("location:underreview.php?admin=1"); 
         }
         
     }

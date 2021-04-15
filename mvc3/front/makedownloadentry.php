@@ -34,7 +34,7 @@ if(isset($_GET['downloadentry'])){
                 while ($insert_note_attachment_record_row = mysqli_fetch_assoc($fetch_note_attachment_records)){
 
                 $insert_noteattachment_path = $insert_note_attachment_record_row['FilePath'];
-                $insert_download_entry_query = "INSERT INTO downloads ( NoteID , Seller , Downloader , IsSellerHasAllowedDownload , AttachmentPath , IsAttachmentDownloaded , AttachmentDownloadedDate , IsPaid , PurchasedPrice , NoteTitle , NoteCategory , CreatedBy ) VALUES ( '$noteid_4_download_entry' , '$insert_sellerid' , '$loginid' , '1' , '$insert_noteattachment_path' , '1' , NOW() , '$insert_ispaid' , '$insert_noteprice' , '$insert_notetitle' , '$insert_notecategory' , '$loginid')";
+                $insert_download_entry_query = "INSERT INTO downloads ( NoteID , Seller , Downloader , IsSellerHasAllowedDownload , AttachmentPath , IsAttachmentDownloaded , AttachmentDownloadedDate , IsPaid , PurchasedPrice , NoteTitle , NoteCategory , CreatedBy ) VALUES ( '$noteid_4_download_entry' , '$insert_sellerid' , '$loginid' , 1 , '$insert_noteattachment_path' , 1 , NOW() , $insert_ispaid , $insert_noteprice , '$insert_notetitle' , '$insert_notecategory' , '$loginid')";
                 $insert_download_entry = mysqli_query($connection ,$insert_download_entry_query);
                     if($insert_download_entry){
                         header('location:download.php?noteid='.$noteid_4_download_entry);
