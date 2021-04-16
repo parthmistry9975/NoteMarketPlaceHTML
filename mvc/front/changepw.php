@@ -9,7 +9,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
-
+    
+    <!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 	
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">

@@ -16,6 +16,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -45,7 +48,7 @@
     <!-- navigation -->
     <section id="nav-bar">
         <nav class="navbar1 navbar-expand-lg">
-            <a class="navbar-brand" href="index.html"><img src="images/user-profile/logo.png" alt="logo"></a>
+            <a class="navbar-brand" href="index.php"><img src="images/user-profile/logo.png" alt="logo"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
             </button>
@@ -55,13 +58,22 @@
                         <a class="nav-link" href="searchnotes.php">Search Notes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
+                        <a class="nav-link" href="login.php">Sell Your Notes</a>
+                    </li>
+                    <?php
+                    if(isset($_SESSION['ID'])){
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                            </li>
+                        <?php
+                    }
+                    ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="faq.html">FAQ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contactus.html">Contact Us</a>
+                        <a class="nav-link" href="contactus.php">Contact Us</a>
                     </li>
                     <?php
                     
@@ -258,8 +270,8 @@
     <script src="js/jquery.min.js"></script>
 
     <!-- bootstrap js -->
-    <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="js/bootstrap/popper.min.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

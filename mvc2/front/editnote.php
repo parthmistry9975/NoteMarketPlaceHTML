@@ -23,6 +23,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -60,25 +63,41 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="searchnotes.html">Search Notes</a>
+                        <a class="nav-link" href="searchnotes.php">Search Notes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="addnote.html">Sell Your Notes</a>
+                        <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="buyerrequest.html">Buyer Requests</a>
+                        <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="faq.html">FAQ</a>
+                        <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contactus.html">Contact Us</a>
+                        <a class="nav-link" href="contactus.php">Contact Us</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <?php
+                        $fetch_image_path_query = "SELECT ProfilePicture FROM user_profile WHERE UserID = ".$_SESSION['ID'];
+                        $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
+                        $image_path = mysqli_fetch_assoc($fetch_image_path);
+                        $pp_file = "../upload/".$_SESSION['ID']."/profile/".$image_path['ProfilePicture'];
+                        
+                        ?>
+                        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="<?php echo $pp_file; ?>" alt="login image">
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="userprofile.php">My Profile</a>
+                                <a class="dropdown-item" href="mydownloads.php">My Downloads</a>
+                                <a class="dropdown-item" href="mysoldnotes.php">My Sold Notes</a>
+                                <a class="dropdown-item" href="myrejectednotes.php">My Rejected Notes</a>
+                                <a class="dropdown-item" href="changepw.php">Change Password</a>
+                                <a class="dropdown-item purple" href="logout.php">LOGOUT</a>
+                            </div>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><img src="images/user-profile/login-image.png" alt="login image"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="login.html"><button type="button" class="btn btn-primary btn_login">Login</button></a>
+                        <a href="logout.php"><button type="button" class="btn btn-primary btn_login">Logout</button></a>
                     </li>
                 </ul>
             </div>
@@ -541,6 +560,7 @@
     <script src="js/jquery.min.js"></script>
 
     <!-- bootstrap js -->
+    <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
     <!-- custom js -->

@@ -3,7 +3,7 @@
 $db['db_host'] = 'localhost';
 $db['db_user'] = 'root';
 $db['db_password'] = '';
-$db['db_name'] = 'notes_market_place';
+$db['db_name'] = 'demo';
 
 foreach($db as $key => $value){
     define(strtoupper($key), $value);

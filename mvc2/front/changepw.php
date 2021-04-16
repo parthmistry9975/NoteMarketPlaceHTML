@@ -78,7 +78,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
-
+    
+    <!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 	
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -126,19 +128,19 @@
                     <div class="form-group">
                     <label for="oldpassword">Old Password</label>
                     <input type="password" name="oldpassword" class="form-control form-control-sm" id="oldpassword" placeholder="Enter your old password">
-                    <span toggle="#oldpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#oldpassword" id="toggle-for-icon" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
                     </div>
                     
                     <div class="form-group">
                     <label for="newpassword">New Password</label>
                     <input type="password" name="newpassword" class="form-control form-control-sm" id="newpassword" placeholder="Enter your new password">
-                    <span toggle="#newpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#newpassword" id="toggle-for-icon1" class="fa fa-eye-slash fa-eye field-icon toggle-password1"></span>
                     </div>
                     
                     <div class="form-group">
                     <label for="confirmpassword">Confirm Password</label>
                     <input type="password" name="confirmpassword" class="form-control form-control-sm" id="confirmpassword" placeholder="Enter your confirm password">
-                    <span toggle="#confirmpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#confirmpassword" id="toggle-for-icon2" class="fa fa-eye-slash fa-eye field-icon toggle-password2"></span>
                     </div>
                     
                     <button type="submit" name="update" class="btn">submit</button>

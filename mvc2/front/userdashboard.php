@@ -35,6 +35,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -119,7 +122,7 @@
     <!-- navigation -->
     <section id="nav-bar">
         <nav class="navbar1 navbar-expand-lg">
-            <a class="navbar-brand" href="index.html"><img src="images/user-profile/logo.png" alt="logo"></a>
+            <a class="navbar-brand" href="index.php"><img src="images/user-profile/logo.png" alt="logo"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
             </button>

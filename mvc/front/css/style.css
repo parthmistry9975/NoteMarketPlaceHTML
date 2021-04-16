@@ -232,6 +232,12 @@ p {
     width: 35px;
     margin-top: -9px;
 }
+.navbar .nav-item a img{
+    border-radius: 50%;
+    height:35px;
+    width: 35px;
+    margin-top: -9px;
+}
 
 .navbar1 .nav-item a:hover{
     color: #6255a5;

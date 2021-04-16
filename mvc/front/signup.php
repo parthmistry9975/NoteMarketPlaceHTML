@@ -21,7 +21,9 @@
 
     <!-- Title -->
     <title>Notes MarketPlace</title>
-
+    
+    <!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -225,18 +227,18 @@
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" name="password" class="form-control form-control-sm" id="password" placeholder="Enter your Password" required>
-                        <span toggle="#password" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
+                        <span toggle="#password" id="toggle-for-icon" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
                     </div>
                     <div class="form-group">
                         <label for="confirmpassword">Confirm Password</label>
                         <input type="password" name="confirmpassword" class="form-control form-control-sm" id="confirmpassword" placeholder="Re-enter your Password" required>
-                        <span toggle="#confirmpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
+                        <span toggle="#confirmpassword" id="toggle-for-icon" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
                     </div>
 
                     <button type="submit" name="submit" class="btn">Sign Up</button>
                 </form>
                 <div class="signup-footer text-center">
-                    <p>Already have an account? <a href="login.html">Login</a></p>
+                    <p>Already have an account? <a href="login.php">Login</a></p>
                 </div>
 
             </div>

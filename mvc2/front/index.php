@@ -14,6 +14,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -44,7 +47,7 @@
     <!-- navigation -->
     <section id="nav-bar">
         <nav class="navbar navbar-expand-lg">
-            <a class="navbar-brand" href="index.html"><img src="images/login/top-logo.png"></a>
+            <a class="navbar-brand" href="index.php"><img id="navbar-top-logo" src="images/login/top-logo.png"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
             </button>
@@ -56,6 +59,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
+                    <?php
+                    if(isset($_SESSION['ID'])){
+                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                            </li>
+                        <?php
+                    }
+                    ?>
                     <li class="nav-item">
                         <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
@@ -69,7 +81,7 @@
                         $fetch_image_path = mysqli_query($connection , $fetch_image_path_query);
                         $image_path = mysqli_fetch_assoc($fetch_image_path);
                         $pp_file = "../upload/".$_SESSION['ID']."/profile/".$image_path['ProfilePicture'];
-                        echo "<li class='nav-item dropdown'><a class='nav-link' href='#' id='navbarDropdown' role='button' data-toggle='dropdown'         aria-haspopup='true' aria-expanded='false'><img src='$pp_file' alt='login image'>
+                        echo "<li class='nav-item dropdown'><a class='nav-link' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><img src='$pp_file' alt='login image'>
                             <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
                                 <a class='dropdown-item' href='userprofile.php'>My Profile</a>
                                 <a class='dropdown-item' href='mydownloads.php'>My Downloads</a>
@@ -287,6 +299,7 @@
     <script src="js/jquery.min.js"></script>
 
     <!-- bootstrap js -->
+    <script src="js/bootstrap/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
 
     <!-- custom js -->

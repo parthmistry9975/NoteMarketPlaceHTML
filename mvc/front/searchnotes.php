@@ -16,6 +16,9 @@
 
 	<!-- Title -->
 	<title>Notes MarketPlace</title>
+	
+	<!-- Website Logo -->
+    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
 
 	<!-- google fonts -->
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -45,7 +48,7 @@
     <!-- navigation -->
     <section id="nav-bar">
         <nav class="navbar1 navbar-expand-lg">
-            <a class="navbar-brand" href="index.html"><img src="images/user-profile/logo.png" alt="logo"></a>
+            <a class="navbar-brand" href="index.php"><img src="images/user-profile/logo.png" alt="logo"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"><i class="fa fa-bars" aria-hidden="true"></i></span>
             </button>
@@ -57,23 +60,44 @@
                     <li class="nav-item">
                         <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
+                    <?php
+                    if(isset($_SESSION['ID'])){
+                        ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                        </li>
+                        <?php
+                    }
+                    ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="faq.html">FAQ</a>
+                        <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contactus.html">Contact Us</a>
+                        <a class="nav-link" href="contactus.php">Contact Us</a>
                     </li>
                     <?php
                     
                     if(isset($_SESSION['ID'])){
-                        echo '<li class="nav-item"><a class="nav-link" href="#"><img src="images/user-profile/login-image.png" alt="login image"></a></li>';
+                        ?><li class='nav-item dropdown'>
+                        <a class='nav-link' href='#' id='navbarDropdown' role='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                            <img src='images/user-profile/login-image.png' alt='login image'>
+                            <div class='dropdown-menu' aria-labelledby='navbarDropdown'>
+                                <a class='dropdown-item' href='userprofile.php'>My Profile</a>
+                                <a class='dropdown-item' href='mydownloads.php'>My Downloads</a>
+                                <a class='dropdown-item' href='mysoldnotes.php'>My Sold Notes</a>
+                                <a class='dropdown-item' href='myrejectednotes.php'>My Rejected Notes</a>
+                                <a class='dropdown-item' href='changepw.php'>Change Password</a>
+                                <a class='dropdown-item purple' href='logout.php'>LOGOUT</a>
+                            </div>
+                        </a>
+                    </li>
+                        <li class="nav-item"><a href="logout.php"><button type="button" class="btn btn-primary btn_login">Logout</button></a></li><?php
+                    }else{
+                        ?>
+                        <li class="nav-item"><a href="login.php"><button type="button" class="btn btn-primary btn_login">Login</button></a></li><?php
                     }
                     
                     ?>
-                    
-                    <li class="nav-item">
-                        <a href="logout.php"><button type="button" class="btn btn-primary btn_login">Logout</button></a>
-                    </li>
                 </ul>
             </div>
         </nav>
@@ -486,13 +510,9 @@
                 </ul>
             </div>
         </div>
-        <div class="push"></div>
-    </section>
-	<!-- filter ends -->
-	
-	<!-- footer -->
+        <!-- footer -->
     <section class="footer">
-        <div class="container">
+        <div class="container-fluid">
             <hr>
             <div class="row">
                 <div class="col-md-6 col footer_content">
@@ -515,6 +535,10 @@
         </div>
     </section>
 	<!-- footer ends -->
+    </section>
+	<!-- filter ends -->
+	
+	
 	
 	
 	
@@ -522,8 +546,8 @@
     <script src="js/jquery.min.js"></script>
 
     <!-- bootstrap js -->
-    <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="js/bootstrap/popper.min.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
 
     <!-- custom js -->
     <script src="js/script.js"></script>

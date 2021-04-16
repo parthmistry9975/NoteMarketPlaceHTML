@@ -14,8 +14,30 @@ $(".toggle-password").click(function () {
   let input = $($(this).attr("toggle"));
   if (input.attr("type") == "password") {
     input.attr("type", "text");
+    $('#toggle-for-icon').removeClass('fa-eye-slash');
   } else {
     input.attr("type", "password");
+    $('#toggle-for-icon').addClass('fa-eye-slash');  
+  }
+});
+$(".toggle-password1").click(function () {
+  let input = $($(this).attr("toggle"));
+  if (input.attr("type") == "password") {
+    input.attr("type", "text");
+    $('#toggle-for-icon1').removeClass('fa-eye-slash');
+  } else {
+    input.attr("type", "password");
+    $('#toggle-for-icon1').addClass('fa-eye-slash');  
+  }
+});
+$(".toggle-password2").click(function () {
+  let input = $($(this).attr("toggle"));
+  if (input.attr("type") == "password") {
+    input.attr("type", "text");
+    $('#toggle-for-icon2').removeClass('fa-eye-slash');
+  } else {
+    input.attr("type", "password");
+    $('#toggle-for-icon2').addClass('fa-eye-slash');  
   }
 });
 /* ==========================================
@@ -26,13 +48,11 @@ function sticky_header() {
     var scrollTop = jQuery(window).scrollTop();;
     if (scrollTop > header_height) {
         jQuery('body').addClass('sticky-nav')
-        $(".navbar img").attr("src", "images/home/PicsArt_12-23-12.15.33.png");
-        $(".navbar-profile .nav-item a img").attr("src", "images/user-profile/login-image.jpg");
+        $(".navbar #navbar-top-logo").attr("src", "images/home/PicsArt_12-23-12.15.33.png");
     } else {
         jQuery('body').removeClass('sticky-nav')
-        $(".navbar img").attr("src", "images/login/top-logo.png");
+        $(".navbar #navbar-top-logo").attr("src", "images/login/top-logo.png");
         $(".navbar-profile .navbar-brand img").attr("src", "images/user-profile/logo.png");
-        $(".navbar-profile .nav-item a img").attr("src", "images/user-profile/login-image.jpg");
     }
 }
 
