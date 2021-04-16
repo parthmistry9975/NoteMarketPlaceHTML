@@ -18,7 +18,7 @@ if(isset($_POST['action'])){
         
         $type = $_POST['type'];
         if( $type != "" ){
-            $fetch_notes .= " HAVING NoteType IN($type) ";
+            $fetch_notes .= " AND NoteType IN($type) ";
         }
         
     }
