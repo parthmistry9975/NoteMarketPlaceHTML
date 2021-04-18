@@ -45,6 +45,9 @@ p {
     margin-top: -35px;
     margin-left: -35px;
 }
+.active{
+    border-bottom: 2.5px solid #6255a5;
+}
 
 /* ==========================================
               login

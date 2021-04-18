@@ -76,7 +76,7 @@
                     }
                     ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="faq.php">FAQ</a>
+                        <a class="nav-link activepage" href="faq.php">FAQ</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contactus.php">Contact Us</a>

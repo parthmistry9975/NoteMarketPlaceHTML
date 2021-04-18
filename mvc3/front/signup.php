@@ -199,12 +199,12 @@
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" pattern="(?=^.{6,24}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$" title="Password atlest have one capital ,lowercase ,special character ,number and 6 to 24 long" class="form-control form-control-sm" id="password" placeholder="Enter your Password" required>
-                        <span toggle="#password" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
+                        <span toggle="#password" id="toggle-for-icon" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
                     </div>
                     <div class="form-group">
                         <label for="confirmpassword">Confirm Password</label>
                         <input type="password" id="confirmpassword" name="confirmpassword" pattern="(?=^.{6,24}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" title="it should be same as password" class="form-control form-control-sm" id="confirmpassword" placeholder="Re-enter your Password" required>
-                        <span toggle="#confirmpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password signup-eye"></span>
+                        <span toggle="#confirmpassword" id="toggle-for-icon1" class="fa fa-eye-slash fa-eye field-icon toggle-password1 signup-eye"></span>
                     </div>
 
                     <button type="submit" name="submit" class="btn">Sign Up</button>

@@ -126,19 +126,19 @@
                     <div class="form-group">
                     <label for="oldpassword">Old Password</label>
                     <input type="password" pattern="(?=^.{6,24}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$" title="enter proper valid password " name="oldpassword" class="form-control form-control-sm" id="oldpassword" placeholder="Enter your old password">
-                    <span toggle="#oldpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#oldpassword" id="toggle-for-icon" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
                     </div>
                     
                     <div class="form-group">
                     <label for="newpassword">New Password</label>
                     <input type="password" pattern="(?=^.{6,24}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$" title="Password atlest have one capital ,lowercase ,special character ,number and 6 to 24 long" name="newpassword" class="form-control form-control-sm" id="newpassword" placeholder="Enter your new password">
-                    <span toggle="#newpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#newpassword" id="toggle-for-icon1" class="fa fa-eye-slash fa-eye field-icon toggle-password1"></span>
                     </div>
                     
                     <div class="form-group">
                     <label for="confirmpassword">Confirm Password</label>
                     <input type="password" pattern="(?=^.{6,24}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$" title="Password atlest have one capital ,lowercase ,special character ,number and 6 to 24 long" name="confirmpassword" class="form-control form-control-sm" id="confirmpassword" placeholder="Enter your confirm password">
-                    <span toggle="#confirmpassword" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#confirmpassword" id="toggle-for-icon2" class="fa fa-eye-slash fa-eye field-icon toggle-password2"></span>
                     </div>
                     
                     <button type="submit" name="update" class="btn">submit</button>

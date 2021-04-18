@@ -7,9 +7,11 @@
 	padding: 10px 0px 10px 0px;
 }
 
+body{
+    color: #333333;
+}
 
-
-body,html {
+html {
     color: #333333;
     height:100%;
 }
@@ -84,6 +86,9 @@ p {
     height: 620px;
     background-size: contain;
     position: absolute;
+}
+.activepage{
+    border-bottom: 2.5px solid #6255a5;
 }
 /* =========================================
                 Navigation
@@ -496,6 +501,10 @@ div.form-center label a.forgot-ps{
 }
 
 .form-center .login-footer a{
+    color: #6255a5;
+}
+
+.signup-footer p a{
     color: #6255a5;
 }
 

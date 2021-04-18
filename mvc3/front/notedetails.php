@@ -8,6 +8,11 @@
             header("location:../admin/admindashboard.php?admin=1");
         }
     }
+    if(isset($_SESSION['reqreg']) and $_SESSION['reqreg'] == 'yes'){
+        $_SESSION['status'] = "your request has been registered please wait untill seller allowed to download !!";
+        $_SESSION['status_code'] = "info";
+        unset($_SESSION['reqreg']);
+    }
 ?>
 
 <!DOCTYPE html>

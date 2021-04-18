@@ -145,7 +145,7 @@
                         <a class="nav-link" href="faq.php">FAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contactus.php">Contact Us</a>
+                        <a class="nav-link activepage" href="contactus.php">Contact Us</a>
                     </li>
                     <?php
                     

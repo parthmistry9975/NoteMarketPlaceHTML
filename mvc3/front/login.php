@@ -141,7 +141,7 @@
                     <div class="form-group">
                     <label for="password">Password<a class="forgot-ps" href="forgotpw.php">Forgot Password?</a></label>
                     <input type="password" pattern="(?=^.{6,24}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$" title="enter proper valid password " name="password" id="login-password" class="form-control form-control-sm" id="password" placeholder="Password" value="<?php if(isset($_COOKIE['passwordcookie'])){ echo $_COOKIE['passwordcookie'] ; } ?>">
-                    <span toggle="#login-password" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
+                    <span toggle="#login-password" id="toggle-for-icon" class="fa fa-eye-slash fa-eye field-icon toggle-password"></span>
                     </div>
                     <div class="form-check">
                     <input type="checkbox" name="rememberme" class="form-check-input form-check-size" id="exampleCheck1">

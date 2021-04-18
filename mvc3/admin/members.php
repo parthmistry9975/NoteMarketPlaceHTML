@@ -145,7 +145,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="members.php?admin=1">Members</a>
+                        <a class="nav-link active" href="members.php?admin=1">Members</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Reports

@@ -146,7 +146,7 @@
                         <a class="nav-link" href="searchnotes.php">Search Notes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
+                        <a class="nav-link activepage" href="userdashboard.php">Sell Your Notes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>

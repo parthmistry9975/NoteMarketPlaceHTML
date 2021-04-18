@@ -24,7 +24,7 @@
         
         if(isset($_POST['save'])) {
             
-            $title= mysqli_real_escape_string($connection,$_POST['notetitle'] );
+            $title= mysqli_real_escape_string($connection,$_POST['notetitle']);
             $_SESSION['title'] = $title;
             
             $category= mysqli_real_escape_string($connection,$_POST['notecategory'] );

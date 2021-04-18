@@ -89,28 +89,36 @@
                 
             }elseif( $buyer_request_number > 0 && $check_allow_download == 1 ){
                 
-                ?>
-                <script>
-                
-                    alert('your request has been accepted visit mydownload page to download note!!');
-                    location.replace("mydownloads.php");
-                
-                </script>
-                <?php
-                
+                $_SESSION['reqacc'] = "yes";
+                header("location:mydownloads.php");
             }else{
-                
-                ?>
-                <script>
-                
-                    alert('your request has been registered please wait untill seller allowed to download !!');
-                    location.replace("notedetails.php?noteid=<?php echo $noteid_4_download_entry; ?>");
-                
-                </script>
-                <?php
+                $_SESSION['reqreg'] = "yes";
+                header("location:notedetails.php?noteid=$noteid_4_download_entry");
                 
             }
             
         }
 
 ?>
+<script src="js/sweetalert/sweetalert.min.js"></script>
+    
+<script>
+    <?php
+        if(isset($_SESSION['status']) and $_SESSION['status'] != ''){
+            ?>
+            
+            swal({
+              title: "<?php echo $_SESSION['status']; ?>",
+//              text: "You clicked the button!",
+              icon: "<?php echo $_SESSION['status_code']; ?>",
+              button: "okay !",
+            });
+        <?php
+            unset($_SESSION['status_code']);
+            unset($_SESSION['status']);
+            
+        }
+        
+        ?>
+        
+</script>

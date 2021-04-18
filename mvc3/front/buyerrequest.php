@@ -123,7 +123,7 @@
                         <a class="nav-link" href="userdashboard.php">Sell Your Notes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="buyerrequest.php">Buyer Requests</a>
+                        <a class="nav-link activepage" href="buyerrequest.php">Buyer Requests</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="faq.php">FAQ</a>

@@ -12,6 +12,11 @@
     if($_SESSION['ROLE'] != 3){
         header("location:../admin/admindashboard.php?admin=1");
     }
+    if(isset($_SESSION['reqacc']) and $_SESSION['reqacc'] == 'yes'){
+        $_SESSION['status'] = "your request has been accepted visit mydownload page to download note!!";
+        $_SESSION['status_code'] = "info";
+        unset($_SESSION['reqacc']);
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
