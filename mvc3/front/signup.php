@@ -14,32 +14,7 @@
 
 <head>
 
-    <!-- meta tags -->
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,user-scalable=no">
-
-    <!-- Title -->
-    <title>Notes MarketPlace</title>
-    
-    <!-- Website Logo -->
-    <link rel="shortcut icon" href="images/dashboard/favicon.ico">
-    
-    <!-- google fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-    <!-- font awesome css -->
-    <link rel="stylesheet" href="css/fontawesome/css/font-awesome.min.css">
-
-
-    <!-- bootstrap css -->
-    <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css">
-
-    <!-- custom css -->
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    
-    
+    <?php include 'includes/links.php'; ?>
 
 </head>
 
@@ -178,7 +153,9 @@
                 <div class="signup-heading text-center">
                     <h2>Creat an Account</h2>
                     <p>Enter your details to signup</p>
-                    <p class="signup-done"><?php if(isset($_SESSION['message'])){ echo $_SESSION['message']; }?></p>
+                    <p class="signup-done"><?php if(isset($_SESSION['message'])){ echo $_SESSION['message'];
+                                                                                  unset($_SESSION['message']);    
+                                                                                }?></p>
 
                 </div>
                 <form action="signup.php" method="post">
@@ -223,12 +200,7 @@
 
     <!-- ends -->
 
-    <!-- jquery-->
-    <script src="js/jquery.min.js"></script>
-
-    <!-- bootstrap js -->
-    <script src="js/bootstrap/bootstrap.min.js"></script>
-    <script src="js/sweetalert/sweetalert.min.js"></script>
+    <?php include 'includes/scriptlink.php'; ?>
     
     <script>
     <?php
@@ -251,8 +223,6 @@
         
     </script>
 
-    <!-- custom js -->
-    <script src="js/script.js"></script>
 
 </body>
 

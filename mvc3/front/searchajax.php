@@ -86,6 +86,7 @@ if(isset($_POST['action'])){
     }
     $_SESSION['currentpage']=$page;
     $num_per_page = 9;
+    $links = 1;
     $start_from = ($page-1) * $num_per_page;
     $for_pagination_fetch_notes = $fetch_notes ;
     $fetch_notes .= " LIMIT $start_from,$num_per_page";
@@ -93,6 +94,8 @@ if(isset($_POST['action'])){
     $final_pagination_fetch_notes = mysqli_query($connection , $for_pagination_fetch_notes);
     $totalrecords = mysqli_num_rows($final_pagination_fetch_notes);
     $totalpages = ceil($totalrecords / $num_per_page);
+    $start = (($page - $links) > 0 ) ? $page - $links : 1;
+    $end = (($page + $links) < $totalpages ) ? $page + $links : $totalpages;
     
 ?>
 
@@ -194,7 +197,7 @@ if(isset($_POST['action'])){
             </a>
         </li>
         <?php 
-            for ($i = 1; $i <= $totalpages; $i++) {
+            for ($i = $start; $i <= $end; $i++) {
                 ?>
                 <li class='page-item <?php if ($page == $i) { echo "active"; } ?>'>
                     <a id='<?php echo $i; ?>' class='page-link' href='#'>
