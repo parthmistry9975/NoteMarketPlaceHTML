@@ -1528,8 +1528,7 @@ set-box-shadow-cicis-menu-to-go {
     transform: translateY(-11px);
     margin-left: 15px;
 }
-#notedetailsrate {
-}
+
 .line{
     border-bottom: 1px solid #d1d1d1;
     padding-bottom: 40px;
@@ -1677,7 +1676,6 @@ h2.member-heading-h2{
     margin-left: -13px;
 }
 table#memberdetail-notes-table{
-    width: 101% !important;
     margin-left: -15px;
 }
 
@@ -1734,4 +1732,12 @@ table.dataTable.no-footer {
         
 table.dataTable thead .sorting {
     background-image: none;
+}
+
+.members-details-table #memberdetail-notes-table_wrapper{
+    width: 100% !important;
+}
+
+.published-table #DataTables_Table_0_wrapper{
+    width: 100% !important;
 }
